@@ -30,6 +30,13 @@ class Score():
         return f'{self.name}: {self.score}'
 
 
+def safe_index(l: list, element):
+    try:
+        return l.index(element)
+    except:
+        return -1
+
+
 def print_scores(results: list[str], all_picks: list[Picks]):
     for picks in all_picks:
         print(score(results, picks))
@@ -37,8 +44,8 @@ def print_scores(results: list[str], all_picks: list[Picks]):
 
 def score(results: list[str], picks: Picks) -> Score:
     score = 0
-    for place, driver in enumerate(results):
-        picked_placement = picks.get_placement(driver)
+    for picked_placement, driver in enumerate(picks.drivers):
+        place = safe_index(results, driver)
         points = get_points(picked_placement, place)
         # print(f"{picks.name} picked {driver} for P{picked_placement + 1}, actual was P{place + 1} ({points} points)")
         score = score + points
@@ -48,6 +55,9 @@ def score(results: list[str], picks: Picks) -> Score:
 
 def get_points(picked_place: int, actual_place: int) -> int:
     scoring = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+
+    if actual_place == -1:
+        return 0
 
     if picked_place == -1:
         return 0
