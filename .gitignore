@@ -1,2 +1,4 @@
 .vscode
 __pycache__
+results.txt
+scores.csv

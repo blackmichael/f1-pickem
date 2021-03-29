@@ -7,12 +7,6 @@ class Picks():
         self.name = name
         self.drivers = picks
 
-    def get_placement(self, driver: str):
-        try:
-            return self.drivers.index(driver)
-        except:
-            return -1
-
     def __str__(self):
         output = f'{self.name} picks:\n'
         for i, driver in enumerate(self.drivers):
@@ -21,13 +15,49 @@ class Picks():
         return output
 
 
+class PickResult():
+    def __init__(self, driver: str, picked_place: int, actual_place: int):
+        self.driver = driver
+        self.picked_place = picked_place
+        self.actual_place = actual_place
+    
+    def points(self) -> int:
+        scoring = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
+
+        if self.actual_place == -1:
+            return 0
+
+        diff = abs(self.picked_place - self.actual_place)
+        if diff > 9:
+            return 0
+        
+        return scoring[diff]
+
+
 class Score():
-    def __init__(self, name: str, score: int):
+    def __init__(self, name: str, pick_results: list[PickResult]):
         self.name = name
-        self.score = score
+        self.pick_results = pick_results
+
+    def calculate(self):
+        score = 0
+        for pick_result in self.pick_results:
+            score = score + pick_result.points()
+        
+        return score
+    
+    def csv_report(self):
+        output = []
+        output.append([self.name,"","",self.calculate()])
+        for pick_result in self.pick_results:
+            output.append([pick_result.driver, pick_result.picked_place+1, pick_result.actual_place+1, pick_result.points()])
+
+        # buffer line
+        output.append([])
+        return output
 
     def __str__(self):
-        return f'{self.name}: {self.score}'
+        return f'{self.name}: {self.calculate()}'
 
 
 def safe_index(l: list, element):
@@ -37,37 +67,32 @@ def safe_index(l: list, element):
         return -1
 
 
+def report_scores(output: str, results: list[str], all_picks: list[Picks]):
+    scores = []
+    for picks in all_picks:
+        scores.append(score(results, picks))
+    
+    with open(output, 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(["Name / Driver", "Picked Place", "Actual Place", "Points"])
+        for s in scores:
+            writer.writerows(s.csv_report())
+    
+    print(f"Report saved to {output}")
+
+
 def print_scores(results: list[str], all_picks: list[Picks]):
     for picks in all_picks:
         print(score(results, picks))
 
 
 def score(results: list[str], picks: Picks) -> Score:
-    score = 0
-    for picked_placement, driver in enumerate(picks.drivers):
-        place = safe_index(results, driver)
-        points = get_points(picked_placement, place)
-        # print(f"{picks.name} picked {driver} for P{picked_placement + 1}, actual was P{place + 1} ({points} points)")
-        score = score + points
+    pick_results = []
+    for picked_place, driver in enumerate(picks.drivers):
+        actual_place = safe_index(results, driver)
+        pick_results.append(PickResult(driver, picked_place, actual_place))
     
-    return Score(picks.name, score)
-
-
-def get_points(picked_place: int, actual_place: int) -> int:
-    scoring = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1]
-
-    if actual_place == -1:
-        return 0
-
-    if picked_place == -1:
-        return 0
-    
-    diff = abs(picked_place - actual_place)
-
-    if diff > 9:
-        return 0
-    
-    return scoring[diff]
+    return Score(picks.name, pick_results)
 
 
 def load_picks(filename) -> list[Picks]:
@@ -104,3 +129,4 @@ if __name__ == "__main__":
     all_picks = load_picks(sys.argv[2])
 
     print_scores(results, all_picks)
+    report_scores("scores.csv", results, all_picks)

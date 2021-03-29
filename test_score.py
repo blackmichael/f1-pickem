@@ -28,7 +28,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 25)
+                self.assertEqual(result.calculate(), 25)
     
 
     def test_score_one_off(self):
@@ -49,7 +49,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 18)
+                self.assertEqual(result.calculate(), 18)
 
 
     def test_score_two_off(self):
@@ -71,7 +71,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 15)
+                self.assertEqual(result.calculate(), 15)
 
 
     def test_score_three_off(self):
@@ -94,7 +94,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 12)
+                self.assertEqual(result.calculate(), 12)
     
 
     def test_score_four_off(self):
@@ -118,7 +118,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 10)
+                self.assertEqual(result.calculate(), 10)
 
 
     def test_score_five_off(self):
@@ -143,7 +143,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 8)
+                self.assertEqual(result.calculate(), 8)
     
 
     def test_score_six_off(self):
@@ -167,7 +167,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 6)
+                self.assertEqual(result.calculate(), 6)
     
 
     def test_score_seven_off(self):
@@ -190,7 +190,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 4)
+                self.assertEqual(result.calculate(), 4)
     
 
     def test_score_eight_off(self):
@@ -212,7 +212,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 2)
+                self.assertEqual(result.calculate(), 2)
     
 
     def test_score_nine_off(self):
@@ -233,7 +233,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 1)
+                self.assertEqual(result.calculate(), 1)
 
 
     def test_score_no_points(self):
@@ -254,7 +254,7 @@ class ScoreTest(unittest.TestCase):
         for p in predictions:
             with self.subTest(p.name):
                 result = score(self.results, p)
-                self.assertEqual(result.score, 0)
+                self.assertEqual(result.calculate(), 0)
     
 
     def test_score_combo(self):
@@ -275,7 +275,7 @@ class ScoreTest(unittest.TestCase):
         expected = 149
 
         result = score(self.results, p)
-        self.assertEqual(result.score, expected)
+        self.assertEqual(result.calculate(), expected)
 
 
 if __name__ == "__main__":
