@@ -78,10 +78,11 @@ def report_scores(output: str, results: list[str], all_picks: list[Picks]):
         for s in scores:
             writer.writerows(s.csv_report())
     
-    print(f"Report saved to {output}")
+    print(f"\nReport saved to {output}")
 
 
 def print_scores(results: list[str], all_picks: list[Picks]):
+    print("Scores:")
     for picks in all_picks:
         print(score(results, picks))
 
