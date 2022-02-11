@@ -39,6 +39,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/core": "^7.17.2",
+    "@babel/eslint-parser": "^7.17.0",
     "@types/react-router-dom": "^5.1.7",
     "react-router-dom": "^5.2.0"
   }
