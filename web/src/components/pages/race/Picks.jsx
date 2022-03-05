@@ -1,7 +1,7 @@
 import { Grid, MenuItem, Paper, TextField, Typography, withStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { getDrivers } from 'store/store';
+import { getDrivers } from 'store/defaultStore';
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);

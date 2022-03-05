@@ -4,11 +4,15 @@ import './index.css';
 import ThemedApp from './App';
 import reportWebVitals from './reportWebVitals';
 import { CssBaseline } from '@material-ui/core';
+import { Provider } from 'react-redux';
+import store from './store/store';
 
 ReactDOM.render(
   <React.StrictMode>
-    <CssBaseline />
-    <ThemedApp />
+    <Provider store={store}>
+      <CssBaseline />
+      <ThemedApp />
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 );

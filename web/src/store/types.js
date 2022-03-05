@@ -1,0 +1,2 @@
+export const GET_LEAGUES = 'GET_LEAGUES';
+export const GET_LEAGUES_ERROR = 'GET_LEAGUES_ERROR';

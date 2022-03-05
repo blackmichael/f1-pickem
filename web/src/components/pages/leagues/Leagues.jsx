@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Typography, withStyles } from '@material-ui/core';
 import { Page } from 'components/common/Page';
 import LinkButton from 'components/common/LinkButton';
-import { getLeagues } from 'store/store'
+import { getLeagues } from 'store/actions/leaguesActions'
 import { StyledTable, StyledTableCell, StyledTableRow } from 'components/common/StyledTable'
+import { getLeaguesResource } from 'utils/resources';
 
 export default function Leagues(props) {
-
-    const [leagues, setLeagues] = useState([])
+    const dispatch = useDispatch();
+    const leaguesState = useSelector(state => state.leaguesList);
+    const { loading, error, leagues } = leaguesState;
 
     useEffect(() => {
-        setLeagues(getLeagues())
-    })
+        dispatch(getLeagues())
+    }, [dispatch])
 
     return (
         <Page>
@@ -65,7 +68,7 @@ function LeagueSelector(props) {
             <StyledTableCell align="left">
                 <LinkButton 
                     text="View" 
-                    to={data.resource}
+                    to={getLeaguesResource(data.id)}
                     variant="contained" 
                     color="primary"
                 />
