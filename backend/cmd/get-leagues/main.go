@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -26,9 +25,6 @@ type LeagueResponse struct {
 }
 
 func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	log.Println("Lambda request", request.RequestContext.RequestID)
-	log.Println("Request body", request.Body)
-
 	resp := Response{
 		Leagues: []LeagueResponse{
 			{

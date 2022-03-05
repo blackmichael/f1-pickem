@@ -1,7 +1,7 @@
 OUTPUT = main # Referenced as Handler in template.yaml
 PACKAGED_TEMPLATE = packaged.yaml
-S3_BUCKET := $(S3_BUCKET)
-STACK_NAME := $(STACK_NAME)
+S3_BUCKET = aws-sam-cli-managed-default-samclisourcebucket-x8wpzusjymdw
+STACK_NAME := f1pickem
 TEMPLATE = template.yaml
 
 .PHONY: test
@@ -26,6 +26,10 @@ lambda:
 
 .PHONY: build
 build: clean lambda
+
+.PHONY: fmt
+fmt:
+	gofmt -w -l .
 
 .PHONY: api
 api: build
