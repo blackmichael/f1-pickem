@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Page, Subtitle } from 'components/common/Page'
 import { Box, FormControl, Grid, InputLabel, makeStyles, MenuItem, Select, Tab, Tabs, TextField, Typography, withStyles } from '@material-ui/core';
-import { getLeague } from 'store/store';
+import { getLeague } from 'store/defaultStore';
 import Results from 'components/pages/race/Results';
 import Picks from 'components/pages/race/Picks';
 import { AntTab, AntTabs, TabPanel } from 'components/common/Tabs';
-import { getRace, getPicks, getLeagueSummary } from 'store/store';
+import { getRace, getPicks, getLeagueSummary } from 'store/defaultStore';
 
 export default function Race(props) {
     const [raceData, setRaceData] = useState({})

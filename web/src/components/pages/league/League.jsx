@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Page, Subtitle } from 'components/common/Page'
 import { Box, Grid, Tab, Tabs, Typography, withStyles } from '@material-ui/core';
-import { getLeague } from 'store/store';
+import { getLeague } from 'store/defaultStore';
 import Scoreboard from 'components/pages/league/Scoreboard';
 import Races from 'components/pages/league/Races';
 import { AntTab, AntTabs, TabPanel } from 'components/common/Tabs';
