@@ -2,6 +2,7 @@ package main
 
 import (
 	"blackmichael/f1-pickem/pkg/domain"
+	"blackmichael/f1-pickem/pkg/users"
 	"blackmichael/f1-pickem/pkg/util"
 	"context"
 	"encoding/json"
@@ -36,11 +37,19 @@ func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewa
 	var req Request
 	err := json.Unmarshal([]byte(request.Body), &req)
 	if err != nil {
-		return util.ErrorResponse(400, "bad request"), err
+		return util.ErrorResponse(400, "bad request"), nil
 	}
 
+	// hack: user auth/service isn't a thing yet, so have the frontend pass an email for the userid
+	// and then verify that it's a known user account / map it to an id
+	userId, err := users.GetUserId(req.UserId)
+	if err != nil {
+		return util.ErrorResponse(404, "user not found"), nil
+	}
+	req.UserId = userId
+
 	if len(req.Picks) != 10 {
-		return util.ErrorResponse(400, "must provide exactly 10 picks"), errors.New("invalid number of picks")
+		return util.ErrorResponse(422, "must provide exactly 10 picks"), nil
 	}
 
 	picks := domain.RacePicks{
