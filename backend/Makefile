@@ -10,33 +10,39 @@ test:
 
 .PHONY: clean
 clean:
-	rm -f $(OUTPUT) $(PACKAGED_TEMPLATE)
+	rm -f $(PACKAGED_TEMPLATE) \
+		get-leagues \
+		submit-picks
 
 .PHONY: install
 install:
 	go get ./...
 
-main: ./cmd/get-leagues/main.go
-	go build -o $(OUTPUT) ./cmd/get-leagues/main.go
+local:
+	go build -o get-leagues ./cmd/get-leagues/main.go
+	go build -o submit-picks ./cmd/submit-picks/main.go
 
 # compile the code to run in Lambda (local or real)
 .PHONY: lambda
 lambda:
-	GOOS=linux GOARCH=amd64 $(MAKE) main
+	GOOS=linux GOARCH=amd64 $(MAKE) local
 
 .PHONY: build
-build: clean lambda
+build: clean local
+
+.PHONY: build/lambda
+build/lambda: clean lambda
 
 .PHONY: fmt
 fmt:
 	gofmt -w -l .
 
 .PHONY: api
-api: build
+api: build/lambda
 	sam local start-api
 
 .PHONY: package
-package: build
+package: build/lambda
 	sam package --template-file $(TEMPLATE) --s3-bucket $(S3_BUCKET) --output-template-file $(PACKAGED_TEMPLATE)
 
 .PHONY: deploy
