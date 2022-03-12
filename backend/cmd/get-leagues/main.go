@@ -1,6 +1,7 @@
 package main
 
 import (
+	"blackmichael/f1-pickem/pkg/util"
 	"context"
 	"encoding/json"
 	"errors"
@@ -50,15 +51,13 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	respStr, err := json.Marshal(resp)
 	if err != nil {
-		return events.APIGatewayProxyResponse{}, errors.New("unable to serialize response")
+		return util.ErrorResponse(500, "failed to render response"), errors.New("unable to serialize response")
 	}
 
 	return events.APIGatewayProxyResponse{
 		StatusCode: 200,
 		Body:       string(respStr),
-		Headers: map[string]string{
-			"Access-Control-Allow-Origin": "*",
-		},
+		Headers:    util.CorsHeaders,
 	}, nil
 }
 

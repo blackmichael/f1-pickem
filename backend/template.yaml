@@ -2,18 +2,31 @@ AWSTemplateFormatVersion : '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 
 Resources:
-  Api:
+  GetLeaguesLambda:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      Handler: main
+      Handler: get-leagues
       Timeout: 10
       Events:
-        GetLeagues:
+        Handler:
           Type: Api
           Properties:
             Path: '/leagues'
             Method: GET
+
+  SubmitPicksLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: submit-picks
+      Timeout: 10
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/picks'
+            Method: POST
 
 Outputs:
   Endpoint:

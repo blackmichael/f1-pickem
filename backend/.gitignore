@@ -1,0 +1,8 @@
+!cmd/
+!pkg/
+!Dockerfile
+!go.*
+!Makefile
+!samconfig.toml
+!template.yaml
+*
