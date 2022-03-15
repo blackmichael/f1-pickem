@@ -6,9 +6,9 @@ import (
 	"blackmichael/f1-pickem/pkg/util"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"log"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -42,7 +42,7 @@ func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewa
 
 	// hack: user auth/service isn't a thing yet, so have the frontend pass an email for the userid
 	// and then verify that it's a known user account / map it to an id
-	userId, err := users.GetUserId(req.UserId)
+	userId, err := users.GetUserId(strings.ToLower(req.UserId))
 	if err != nil {
 		return util.ErrorResponse(404, "user not found"), nil
 	}
