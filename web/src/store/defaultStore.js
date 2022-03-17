@@ -158,25 +158,26 @@ export function getRace(id) {
 
 const driversList = [
     "Max Verstappen",
-    "Lando Norris",
+    "Sergio Perez",
     "Lewis Hamilton",
+    "George Russell",
     "Carlos Sainz",
-    "Valtteri Bottas",
+    "Charles Leclerc",
+    "Lando Norris",
     "Daniel Ricciardo",
     "Yuki Tsunoda",
-    "Lance Stroll",
     "Pierre Gasly",
-    "Sergio Perez",
     "Esteban Ocon",
-    "Charles Leclerc",
-    "Antonio Giovinazzi",
-    "Sebastian Vettel",
     "Fernando Alonso",
-    "Kimi Räikkönen",
-    "George Russell",
+    "Lance Stroll",
+    "Sebastian Vettel",
+    "Valtteri Bottas",
+    "Zhou Guanyu",
     "Mick Schumacher",
+    "Kevin Magnussen",
     "Nicholas Latifi",
-    "Nikita Mazepin"
+    "Alexander Albon",
+    "Nico Hulkenberg"
 ];
 
 export function getDrivers() {
