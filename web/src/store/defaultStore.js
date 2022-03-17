@@ -98,6 +98,12 @@ const defaultLeague = {
             "name": "Australian Grand Prix",
             "winners": ["tbd", "tbd"],
             "date": "2022-04-10"
+        },
+        {
+            "id": "20230101",
+            "name": "TEST RACE",
+            "winners": ["f1pickem.com"],
+            "date": "2023-01-01"
         }
     ]
 }
