@@ -82,22 +82,22 @@ const defaultLeague = {
     },
     "races": [
         {
-            "id": "20210627",
-            "name": "Styrian Grand Prix",
-            "winners": ["Reed Gontarek"],
-            "date": "2021-06-27"
+            "id": "20220320",
+            "name": "Bahrain Grand Prix",
+            "winners": ["tbd"],
+            "date": "2022-03-20"
         },
         {
-            "id": "20210623",
-            "name": "French Grand Prix",
-            "winners": ["Chuck Mullen"],
-            "date": "2021-06-23"
+            "id": "20220327",
+            "name": "Saudi Arabian Grand Prix",
+            "winners": ["tbd"],
+            "date": "2022-03-27"
         },
         {
-            "id": "20210606",
-            "name": "Azerbaijan Grand Prix",
-            "winners": ["John Becker", "Gus Horner"],
-            "date": "2021-06-06"
+            "id": "20220410",
+            "name": "Australian Grand Prix",
+            "winners": ["tbd", "tbd"],
+            "date": "2022-04-10"
         }
     ]
 }

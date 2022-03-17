@@ -21,7 +21,7 @@ export default function Races(props) {
                     </TableHead>
                     <TableBody>
                         {races
-                            .sort((a, b) => ('' + b.date).localeCompare(a.date))
+                            .sort((a, b) => ('' + a.date).localeCompare(b.date))
                             .map((race, idx) => (
                                 <StyledTableRow key={race.name + idx}>
                                     <StyledTableCell>{race.name}</StyledTableCell>

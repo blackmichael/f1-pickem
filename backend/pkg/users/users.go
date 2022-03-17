@@ -13,6 +13,7 @@ var alphaTestUserIds = map[string]string{
 	"john.becker94@gmail.com":     "8",
 	"nicholas.f.sommer@gmail.com": "9",
 	"johntosberg@gmail.com":       "10",
+	"tarekfmarei@gmail.com":       "11",
 }
 
 var UserNotFound = errors.New("user not found")
