@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import leaguesReducer from './leaguesReducers';
+import picksReducer from './picksReducers';
 
 export default combineReducers({
-    leaguesList: leaguesReducer
+    leaguesList: leaguesReducer,
+    picksSubmittedAt: picksReducer
 })

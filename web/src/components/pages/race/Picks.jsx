@@ -1,7 +1,12 @@
-import { Grid, MenuItem, Paper, TextField, Typography, withStyles } from '@material-ui/core';
+import { Button, Grid, MenuItem, Paper, TextField, Typography, withStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { getDrivers } from 'store/defaultStore';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
+import { useDispatch, useSelector } from 'react-redux';
+import { submitPicks } from 'store/actions/picksActions';
+import { toDateTimeDisplayString } from 'utils/time';
 
 const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
@@ -30,13 +35,9 @@ const getListStyle = isDraggingOver => ({
 });
 
 export default function Picks(props) {
-
-    const allPicks = props.allPicks || [];
-
-    const [picker, setPicker] = useState(props.default);
-    const handlePickerChange = (event) => {
-        setPicker(event.target.value);
-    }
+    const dispatch = useDispatch();
+    const picksSubmittedState = useSelector(state => state.picksSubmittedAt);
+    const { loading, error, submittedAt } = picksSubmittedState;
 
     const [drivers, setDrivers] = useState(getDrivers());
 
@@ -54,23 +55,43 @@ export default function Picks(props) {
         setDrivers(newOrder);
     }
 
+    const formik = useFormik({
+        initialValues: {
+          email: '',
+        },
+        validationSchema: Yup.object({
+            email: Yup.string().email("Invalid email address").required('Required'),
+        }),
+        onSubmit: values => {
+            let request = {
+                league_id: props.leagueId,
+                race_id: props.raceId,
+                user_id: values.email,
+                picks: drivers.slice(0, 10),
+            }
+            dispatch(submitPicks(request));
+        },
+      });
+
     return (
-        <Grid container>
+        <Grid container style={{width: '75%', paddingLeft: '25%'}}>
             <Grid item xs={12}>
-                <TextField
-                    select
-                    id="select-picker"
-                    label="Picks For"
-                    value={picker}
-                    onChange={handlePickerChange}
-                >
-                    {allPicks.map((picker) => (
-                        <MenuItem key={picker.name} value={picker.name}>{picker.name}</MenuItem>
-                    ))}
-                </TextField>
+                {submittedAt != ""  ? <Typography variant="caption">Picks submitted on {toDateTimeDisplayString(submittedAt)}</Typography> : null }
+                {error ? <Typography variant="caption">{error}</Typography> : null }
             </Grid>
             <Grid item xs={12}>
-                <div style={{width: '75%', paddingLeft: '25%'}}>
+                <form onSubmit={formik.handleSubmit}>
+                    <TextField
+                        id="email"
+                        label="Email Address"
+                        {...formik.getFieldProps('email')}
+                        />
+                    <Button type="submit" variant="outlined">Submit</Button>
+                    {formik.touched.email && formik.errors.email ? (<Typography style={{color: "red"}}>{formik.errors.email}</Typography>) : null}
+                </form>
+            </Grid>
+            <Grid item xs={12} style={{paddingTop: '2em'}}>
+                <div>
                     <Typography variant='h5'>Click and drag to choose your top 10 drivers.</Typography>
                     <DragDropContext onDragEnd={onDragEnd}>
                         <Droppable droppableId="droppable">

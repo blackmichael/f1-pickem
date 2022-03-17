@@ -1,2 +1,5 @@
 export const GET_LEAGUES = 'GET_LEAGUES';
 export const GET_LEAGUES_ERROR = 'GET_LEAGUES_ERROR';
+
+export const SUBMIT_PICKS = 'SUBMIT_PICKS';
+export const SUBMIT_PICKS_ERROR = 'SUBMIT_PICKS_ERROR';

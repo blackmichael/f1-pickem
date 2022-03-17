@@ -48,7 +48,11 @@ export default function Race(props) {
                     <AntTab label="Results" />
                 </AntTabs>
                 <TabPanel value={tab} index={0}>
-                    <Picks default={members[0]} allPicks={racePicks.all_picks} />
+                    <Picks
+                        default={members[0]}
+                        leagueId={props.match.params.leagueId}
+                        raceId={props.match.params.raceId}
+                        />
                 </TabPanel>
                 <TabPanel value={tab} index={1}>
                     <Results />
