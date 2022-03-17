@@ -31,20 +31,8 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 			{
 				Id:           "1",
 				Name:         "Fast Boiz",
-				NumOfMembers: 8,
-				Season:       "2021",
-			},
-			{
-				Id:           "2",
-				Name:         "MCLAREN Fan Club",
-				NumOfMembers: 4,
+				NumOfMembers: 11,
 				Season:       "2022",
-			},
-			{
-				Id:           "3",
-				Name:         "Drive To Survive",
-				NumOfMembers: 10,
-				Season:       "2017",
 			},
 		},
 	}

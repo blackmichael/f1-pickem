@@ -63,7 +63,7 @@ function LeagueSelector(props) {
     return (
         <StyledTableRow>
             <StyledTableCell component="th" scope="row">{data.name}</StyledTableCell>
-            <StyledTableCell align="left">{data.members}</StyledTableCell>
+            <StyledTableCell align="left">{data.num_of_members}</StyledTableCell>
             <StyledTableCell align="left">{data.season}</StyledTableCell>
             <StyledTableCell align="left">
                 <LinkButton 
