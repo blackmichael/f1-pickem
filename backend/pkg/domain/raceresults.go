@@ -1,8 +1,8 @@
 package domain
 
 type RaceResults struct {
-	Season     string   `dynamodbav:"Season"`
-	RaceNumber string   `dynamodbav:"RaceNumber"`
-	RaceDate   string   `dynamodbav:"RaceDate"`
-	Results    []string `dynamodbav:"Results"`
+	Season     string   `dynamodbav:"Season" json:"season"`
+	RaceNumber string   `dynamodbav:"RaceNumber" json:"race_number"`
+	RaceDate   string   `dynamodbav:"RaceDate" json:"race_date"`
+	Results    []string `dynamodbav:"Results" json:"results"`
 }

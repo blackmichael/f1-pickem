@@ -2,6 +2,7 @@ package dynamo
 
 import (
 	"blackmichael/f1-pickem/pkg/domain"
+	"context"
 	"errors"
 	"log"
 
@@ -12,8 +13,8 @@ import (
 )
 
 type RaceResultsRepository interface {
-	GetRaceResults(season, raceNumber string) (*domain.RaceResults, error)
-	SaveRaceResults(race domain.RaceResults) error
+	GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error)
+	SaveRaceResults(ctx context.Context, race *domain.RaceResults) error
 }
 
 type raceResultsRepository struct {
@@ -30,8 +31,8 @@ func NewRaceResultsRepository(sess *session.Session) RaceResultsRepository {
 	}
 }
 
-func (r raceResultsRepository) GetRaceResults(season, raceNumber string) (*domain.RaceResults, error) {
-	result, err := r.svc.Query(&dynamodb.QueryInput{
+func (r raceResultsRepository) GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error) {
+	result, err := r.svc.QueryWithContext(ctx, &dynamodb.QueryInput{
 		TableName: aws.String(r.tableName),
 		KeyConditions: map[string]*dynamodb.Condition{
 			"Season": {
@@ -75,16 +76,16 @@ func (r raceResultsRepository) GetRaceResults(season, raceNumber string) (*domai
 	return &raceResults, nil
 }
 
-func (r raceResultsRepository) SaveRaceResults(raceResults domain.RaceResults) error {
+func (r raceResultsRepository) SaveRaceResults(ctx context.Context, raceResults *domain.RaceResults) error {
 	log.Printf("saving race results to dynamo, season: %s, raceNumber: %s, raceDate: %s\n", raceResults.Season, raceResults.RaceNumber, raceResults.RaceDate)
 
-	rawResults, err := dynamodbattribute.MarshalMap(raceResults)
+	rawResults, err := dynamodbattribute.MarshalMap(*raceResults)
 	if err != nil {
 		log.Printf("ERROR: failed to marshal results (%s)\n", err.Error())
 		return err
 	}
 
-	_, err = r.svc.PutItem(&dynamodb.PutItemInput{
+	_, err = r.svc.PutItemWithContext(ctx, &dynamodb.PutItemInput{
 		TableName: aws.String(r.tableName),
 		Item:      rawResults,
 	})

@@ -1,4 +1,3 @@
-OUTPUT = main # Referenced as Handler in template.yaml
 PACKAGED_TEMPLATE = packaged.yaml
 S3_BUCKET = aws-sam-cli-managed-default-samclisourcebucket-x8wpzusjymdw
 STACK_NAME := f1pickem
@@ -10,19 +9,17 @@ test:
 
 .PHONY: clean
 clean:
-	rm -f $(PACKAGED_TEMPLATE) \
-		get-leagues \
-		submit-picks \
-		fetch-race-results
+	rm -f $(PACKAGED_TEMPLATE) *.out
 
 .PHONY: install
 install:
 	go get ./...
 
 local:
-	go build -o get-leagues ./cmd/get-leagues/main.go
-	go build -o submit-picks ./cmd/submit-picks/main.go
-	go build -o fetch-race-results ./cmd/fetch-race-results/main.go
+	go build -o get-leagues.out ./cmd/get-leagues/main.go
+	go build -o submit-picks.out ./cmd/submit-picks/main.go
+	go build -o fetch-race-results.out ./cmd/fetch-race-results/main.go
+	go build -o get-race-scores.out ./cmd/get-race-scores/main.go
 
 # compile the code to run in Lambda (local or real)
 .PHONY: lambda
