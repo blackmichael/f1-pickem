@@ -12,7 +12,8 @@ test:
 clean:
 	rm -f $(PACKAGED_TEMPLATE) \
 		get-leagues \
-		submit-picks
+		submit-picks \
+		fetch-race-results
 
 .PHONY: install
 install:
@@ -21,6 +22,7 @@ install:
 local:
 	go build -o get-leagues ./cmd/get-leagues/main.go
 	go build -o submit-picks ./cmd/submit-picks/main.go
+	go build -o fetch-race-results ./cmd/fetch-race-results/main.go
 
 # compile the code to run in Lambda (local or real)
 .PHONY: lambda
