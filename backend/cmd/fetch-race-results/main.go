@@ -15,25 +15,21 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-type Response struct {
-	Results []string `json:"results"`
-}
-
 func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("incoming request: %s\n", request.PathParameters)
 
 	season, ok := request.PathParameters["season"]
 	if !ok {
-		return util.MessageResponse(400, "missing query parameter: season"), nil
+		return util.MessageResponse(400, "missing path parameter: season"), nil
 	}
 
 	raceNumber, ok := request.PathParameters["race_number"]
 	if !ok {
-		return util.MessageResponse(400, "missing query parameter: race_number"), nil
+		return util.MessageResponse(400, "missing path parameter: race_number"), nil
 	}
 
 	// read race data from db
-	raceResults, err := h.raceResultsRepository.GetRaceResults(season, raceNumber)
+	raceResults, err := h.raceResultsRepository.GetRaceResults(ctx, season, raceNumber)
 	if err != nil {
 		return util.MessageResponse(500, "failed to get race data"), err
 	}
@@ -54,15 +50,13 @@ func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIG
 		}
 
 		// if api has results, write them to db
-		err = h.raceResultsRepository.SaveRaceResults(*raceResults)
+		err = h.raceResultsRepository.SaveRaceResults(ctx, raceResults)
 		if err != nil {
 			return util.MessageResponse(500, "failed to save race data"), err
 		}
 	}
 
-	response, err := json.Marshal(Response{
-		Results: raceResults.Results,
-	})
+	response, err := json.Marshal(raceResults)
 	if err != nil {
 		return util.MessageResponse(500, "unable to marshal response"), err
 	}

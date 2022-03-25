@@ -6,7 +6,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      Handler: get-leagues
+      Handler: get-leagues.out
       Timeout: 10
       Events:
         Handler:
@@ -19,7 +19,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      Handler: submit-picks
+      Handler: submit-picks.out
       Timeout: 10
       Events:
         Handler:
@@ -32,13 +32,26 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       Runtime: go1.x
-      Handler: fetch-race-results
+      Handler: fetch-race-results.out
       Timeout: 10
       Events:
         Handler:
           Type: Api
           Properties:
             Path: '/race-results/{season}/{race_number}'
+            Method: GET
+  
+  GetRaceScoresLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: get-race-scores.out
+      Timeout: 10
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/race-scores/{league}/{season}/{race_number}'
             Method: GET
 
 

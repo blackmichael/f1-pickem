@@ -59,7 +59,7 @@ func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewa
 		SubmittedAt:    time.Now().UTC(),
 	}
 
-	err = h.racePicksRepository.SavePicks(req.LeagueId, req.RaceId, req.UserId, picks)
+	err = h.racePicksRepository.SavePicks(ctx, req.LeagueId, req.RaceId, req.UserId, picks)
 	if err != nil {
 		return util.MessageResponse(500, "failed to save picks to db"), err
 	}
