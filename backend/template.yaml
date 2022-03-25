@@ -38,7 +38,7 @@ Resources:
         Handler:
           Type: Api
           Properties:
-            Path: '/race-results'
+            Path: '/race-results/{season}/{race_number}'
             Method: GET
 
 

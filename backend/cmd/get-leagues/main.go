@@ -39,7 +39,7 @@ func Handler(ctx context.Context, request events.APIGatewayProxyRequest) (events
 
 	respStr, err := json.Marshal(resp)
 	if err != nil {
-		return util.ErrorResponse(500, "failed to render response"), errors.New("unable to serialize response")
+		return util.MessageResponse(500, "failed to render response"), errors.New("unable to serialize response")
 	}
 
 	return events.APIGatewayProxyResponse{
