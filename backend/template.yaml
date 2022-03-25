@@ -27,6 +27,20 @@ Resources:
           Properties:
             Path: '/picks'
             Method: POST
+  
+  FetchRaceResultsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: fetch-race-results
+      Timeout: 10
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/race-results'
+            Method: GET
+
 
 Outputs:
   Endpoint:
