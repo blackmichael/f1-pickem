@@ -12,7 +12,7 @@ import (
 )
 
 type RaceResultsRepository interface {
-	GetRaceResults(raceId string) (*domain.RaceResults, error)
+	GetRaceResults(season, raceNumber string) (*domain.RaceResults, error)
 	SaveRaceResults(race domain.RaceResults) error
 }
 
@@ -30,15 +30,23 @@ func NewRaceResultsRepository(sess *session.Session) RaceResultsRepository {
 	}
 }
 
-func (r raceResultsRepository) GetRaceResults(raceId string) (*domain.RaceResults, error) {
+func (r raceResultsRepository) GetRaceResults(season, raceNumber string) (*domain.RaceResults, error) {
 	result, err := r.svc.Query(&dynamodb.QueryInput{
 		TableName: aws.String(r.tableName),
 		KeyConditions: map[string]*dynamodb.Condition{
-			"RaceID": {
+			"Season": {
 				ComparisonOperator: aws.String("EQ"),
 				AttributeValueList: []*dynamodb.AttributeValue{
 					{
-						S: aws.String(raceId),
+						S: aws.String(season),
+					},
+				},
+			},
+			"RaceNumber": {
+				ComparisonOperator: aws.String("EQ"),
+				AttributeValueList: []*dynamodb.AttributeValue{
+					{
+						S: aws.String(raceNumber),
 					},
 				},
 			},
@@ -68,7 +76,7 @@ func (r raceResultsRepository) GetRaceResults(raceId string) (*domain.RaceResult
 }
 
 func (r raceResultsRepository) SaveRaceResults(raceResults domain.RaceResults) error {
-	log.Printf("saving race results to dynamo, raceID: %s\n", raceResults.RaceID)
+	log.Printf("saving race results to dynamo, season: %s, raceNumber: %s, raceDate: %s\n", raceResults.Season, raceResults.RaceNumber, raceResults.RaceDate)
 
 	rawResults, err := dynamodbattribute.MarshalMap(raceResults)
 	if err != nil {

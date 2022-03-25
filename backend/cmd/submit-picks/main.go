@@ -37,19 +37,19 @@ func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewa
 	var req Request
 	err := json.Unmarshal([]byte(request.Body), &req)
 	if err != nil {
-		return util.ErrorResponse(400, "bad request"), nil
+		return util.MessageResponse(400, "bad request"), nil
 	}
 
 	// hack: user auth/service isn't a thing yet, so have the frontend pass an email for the userid
 	// and then verify that it's a known user account / map it to an id
 	userId, err := users.GetUserId(strings.ToLower(req.UserId))
 	if err != nil {
-		return util.ErrorResponse(404, "user not found"), nil
+		return util.MessageResponse(404, "user not found"), nil
 	}
 	req.UserId = userId
 
 	if len(req.Picks) != 10 {
-		return util.ErrorResponse(422, "must provide exactly 10 picks"), nil
+		return util.MessageResponse(422, "must provide exactly 10 picks"), nil
 	}
 
 	picks := domain.RacePicks{
@@ -61,14 +61,14 @@ func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewa
 
 	err = h.racePicksRepository.SavePicks(req.LeagueId, req.RaceId, req.UserId, picks)
 	if err != nil {
-		return util.ErrorResponse(500, "failed to save picks to db"), err
+		return util.MessageResponse(500, "failed to save picks to db"), err
 	}
 
 	response, err := json.Marshal(Response{
 		SubmittedAt: picks.SubmittedAt.UTC().Format(time.RFC3339),
 	})
 	if err != nil {
-		return util.ErrorResponse(500, "failed to render response"), err
+		return util.MessageResponse(500, "failed to render response"), err
 	}
 
 	return events.APIGatewayProxyResponse{

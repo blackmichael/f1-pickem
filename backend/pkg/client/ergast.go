@@ -14,7 +14,7 @@ import (
 )
 
 type RaceDataClient interface {
-	GetRaceResults(ctx context.Context, season, raceNumber, raceDate string) (*domain.RaceResults, error)
+	GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error)
 }
 
 type ergastClient struct {
@@ -101,8 +101,8 @@ type raceResultsResponse struct {
 	} `json:"MRData"`
 }
 
-func (api ergastClient) GetRaceResults(ctx context.Context, season, raceNumber, raceDate string) (*domain.RaceResults, error) {
-	log.Printf("fetching race results for season:%s, race_number:%s, race_date:%s\n", season, raceNumber, raceDate)
+func (api ergastClient) GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error) {
+	log.Printf("fetching race results for season:%s, race_number:%s\n", season, raceNumber)
 
 	client := http.DefaultClient
 	url := fmt.Sprintf("%s/api/f1/%s/%s/results.json", api.baseUrl, season, raceNumber)
@@ -145,11 +145,6 @@ func (api ergastClient) GetRaceResults(ctx context.Context, season, raceNumber, 
 	}
 
 	race := raceResults.MRData.RaceTable.Races[0]
-	if race.Date != raceDate {
-		log.Printf("ERROR: unmatched race date in results, results: %#v\n", raceResults)
-		return nil, errors.New("unmatched race date in results")
-	}
-
 	// if the results aren't available then this might be empty instead
 	if len(race.Results) == 0 {
 		return nil, nil
@@ -178,8 +173,9 @@ func (api ergastClient) GetRaceResults(ctx context.Context, season, raceNumber, 
 	}
 
 	return &domain.RaceResults{
-		RaceID:  domain.RaceDateToRaceId(raceDate),
-		Season:  season,
-		Results: results,
+		Season:     season,
+		RaceNumber: raceNumber,
+		RaceDate:   race.Date,
+		Results:    results,
 	}, nil
 }

@@ -6,7 +6,7 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-func ErrorResponse(statusCode int, message string) events.APIGatewayProxyResponse {
+func MessageResponse(statusCode int, message string) events.APIGatewayProxyResponse {
 	// ignore the error, response will be an empty byte array
 	response, _ := json.Marshal(map[string]string{"message": message})
 
