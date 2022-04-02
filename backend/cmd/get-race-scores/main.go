@@ -28,15 +28,13 @@ func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGate
 		return util.MessageResponse(400, "missing path parameter: league"), nil
 	}
 
-	season, ok := request.PathParameters["season"]
+	raceId, ok := request.PathParameters["race_id"]
 	if !ok {
-		return util.MessageResponse(400, "missing path parameter: season"), nil
+		return util.MessageResponse(400, "missing path parameter: race_id"), nil
 	}
 
-	raceNumber, ok := request.PathParameters["race_number"]
-	if !ok {
-		return util.MessageResponse(400, "missing path parameter: race_number"), nil
-	}
+	season := raceId[0:4]
+	raceNumber := raceId[4:]
 
 	raceResults, err := h.raceResultsClient.FetchRaceResults(ctx, season, raceNumber)
 	if err != nil {
@@ -51,7 +49,7 @@ func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGate
 		}, nil
 	}
 
-	allPicks, err := h.racePicksRepository.GetAllPicks(ctx, leagueId, domain.GetRaceId(season, raceNumber))
+	allPicks, err := h.racePicksRepository.GetAllPicks(ctx, leagueId, raceId)
 	if err != nil {
 		return util.MessageResponse(500, "failed to get user picks"), err
 	}
