@@ -17,7 +17,7 @@ import (
 )
 
 type Response struct {
-	UserScores []*domain.RaceScore
+	UserScores []*domain.RaceScore `json:"user_scores"`
 }
 
 func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -62,7 +62,7 @@ func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGate
 		userScores = append(userScores, scorer.GetScore(userPicks))
 	}
 
-	response, err := json.Marshal(userScores)
+	response, err := json.Marshal(Response{UserScores: userScores})
 	if err != nil {
 		return util.MessageResponse(500, "unable to marshal response"), err
 	}
