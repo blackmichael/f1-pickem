@@ -51,7 +51,7 @@ Resources:
         Handler:
           Type: Api
           Properties:
-            Path: '/race-scores/{league}/{season}/{race_number}'
+            Path: '/race-scores/{league}/{race_id}'
             Method: GET
 
 
