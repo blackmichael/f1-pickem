@@ -1,0 +1,9 @@
+{
+  "extends": ["next", "next/core-web-vitals"],
+  "rules": {
+    "no-console": "error",
+    "unused-imports/no-unused-imports": "warn",
+    "react/no-unescaped-entities": "off"
+  },
+  "plugins": ["unused-imports"]
+}

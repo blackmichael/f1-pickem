@@ -1,53 +1,53 @@
-import React from 'react';
-import { Divider, Drawer, List, Typography } from '@material-ui/core';
-import HomeIcon from '@material-ui/icons/Home';
-import FlagIcon from '@material-ui/icons/Flag';
-import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
-import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
-import useStyles from 'utils/styles';
-import Home from 'components/pages/home/Home';
-import ListItemLink from 'components/common/ListItemLink';
-import Leagues from 'components/pages/leagues/Leagues';
-import Race from 'components/pages/race/Race';
-import NewLeagueForm from 'components/pages/leagues/NewLeagueForm';
-import League from 'components/pages/league/League';
+import React from "react";
+import { Divider, Drawer, List, Typography } from "@material-ui/core";
+import HomeIcon from "@material-ui/icons/Home";
+import FlagIcon from "@material-ui/icons/Flag";
+import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
+import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import useStyles from "utils/styles";
+import Home from "components/pages/home/Home";
+import ListItemLink from "components/common/ListItemLink";
+import Leagues from "components/pages/leagues/Leagues";
+import Race from "components/pages/race/Race";
+import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
+import League from "components/pages/league/League";
 
 const theme = createMuiTheme({
   palette: {
     common: {
       black: "#000",
-      white: "#fff"
+      white: "#fff",
     },
     background: {
       paper: "#fff",
-      default: "#fafafa"
+      default: "#fafafa",
     },
     primary: {
       light: "#ff6737",
       // main: "#ff2800",
       main: "#e10600",
       dark: "#c30000",
-      contrastText: "#fff"
+      contrastText: "#fff",
     },
     secondary: {
       light: "#ff4081",
       main: "#f50057",
       dark: "#c51162",
-      contrastText: "#fff"
+      contrastText: "#fff",
     },
     error: {
       light: "#e57373",
       main: "#f44336",
       dark: "#d32f2f",
-      contrastText: "#fff"
+      contrastText: "#fff",
     },
     text: {
       primary: "rgba(0, 0, 0, 0.87)",
       secondary: "rgba(0, 0, 0, 0.54)",
       disabled: "rgba(0, 0, 0, 0.38)",
-      hint: "rgba(0, 0, 0, 0.38)"
-    }
-  }
+      hint: "rgba(0, 0, 0, 0.38)",
+    },
+  },
 });
 
 // necessary to keep App in a separate component for the theme to be rendered correctly
@@ -65,8 +65,10 @@ function Title() {
   const classes = useStyles();
 
   return (
-    <Link to="/" className={classes.title}>F1 Pick 'Em</Link>
-  )
+    <Link to="/" className={classes.title}>
+      F1 Pick 'Em
+    </Link>
+  );
 }
 
 // TODO: make this responsive for mobile
@@ -76,24 +78,24 @@ function Sidebar() {
   const classes = useStyles();
 
   return (
-      <Drawer
-        variant="permanent"
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
-        className={classes.drawer}
-        classes={{
-          paper: classes.drawer
-        }}
-      >
-        <Title />
-        <Divider />
-        <List>
-          <ListItemLink to="/" primary="Home" icon={<HomeIcon />}/>
-          <ListItemLink to="/leagues" primary="Leagues" icon={<FlagIcon />}/>
-        </List>
-      </Drawer>
-  )
+    <Drawer
+      variant="permanent"
+      ModalProps={{
+        keepMounted: true, // Better open performance on mobile.
+      }}
+      className={classes.drawer}
+      classes={{
+        paper: classes.drawer,
+      }}
+    >
+      <Title />
+      <Divider />
+      <List>
+        <ListItemLink to="/" primary="Home" icon={<HomeIcon />} />
+        <ListItemLink to="/leagues" primary="Leagues" icon={<FlagIcon />} />
+      </List>
+    </Drawer>
+  );
 }
 
 function App() {
@@ -103,14 +105,14 @@ function App() {
     <div className={classes.root}>
       <Sidebar />
       <Switch>
-        <Route exact path='/' component={Home} />
-        <Route exact path='/leagues' component={Leagues} />
-        <Route exact path='/leagues/new' component={NewLeagueForm} />
-        <Route exact path='/leagues/:id' component={League} />
-        <Route exact path='/leagues/:leagueId/races/:raceId' component={Race} />
+        <Route exact path="/" component={Home} />
+        <Route exact path="/leagues" component={Leagues} />
+        <Route exact path="/leagues/new" component={NewLeagueForm} />
+        <Route exact path="/leagues/:id" component={League} />
+        <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
       </Switch>
     </div>
-  )
+  );
 }
 
 export default ThemedApp;
