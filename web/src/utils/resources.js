@@ -1,3 +1,3 @@
 export function getLeaguesResource(id) {
-    return `/leagues/${id}`
+  return `/leagues/${id}`;
 }
