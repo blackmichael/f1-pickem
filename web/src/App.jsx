@@ -1,6 +1,6 @@
 import React from 'react';
 import { Divider, Drawer, List, Typography } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import HomeIcon from '@material-ui/icons/Home';
 import FlagIcon from '@material-ui/icons/Flag';
 import { createMuiTheme, ThemeProvider } from '@material-ui/core/styles';
 import { BrowserRouter as Router, Link, Route, Switch } from 'react-router-dom';
@@ -11,7 +11,6 @@ import Leagues from 'components/pages/leagues/Leagues';
 import Race from 'components/pages/race/Race';
 import NewLeagueForm from 'components/pages/leagues/NewLeagueForm';
 import League from 'components/pages/league/League';
-import About from 'components/pages/about/About';
 
 const theme = createMuiTheme({
   palette: {
@@ -66,11 +65,7 @@ function Title() {
   const classes = useStyles();
 
   return (
-    <Link to="/" className={classes.title}>
-      <Typography>
-        F1 Pick 'Em
-      </Typography>
-    </Link>
+    <Link to="/" className={classes.title}>F1 Pick 'Em</Link>
   )
 }
 
@@ -94,7 +89,7 @@ function Sidebar() {
         <Title />
         <Divider />
         <List>
-          <ListItemLink to="/about" primary="About" icon={<InfoIcon />}/>
+          <ListItemLink to="/" primary="Home" icon={<HomeIcon />}/>
           <ListItemLink to="/leagues" primary="Leagues" icon={<FlagIcon />}/>
         </List>
       </Drawer>
@@ -109,7 +104,6 @@ function App() {
       <Sidebar />
       <Switch>
         <Route exact path='/' component={Home} />
-        <Route exact path='/about' component={About} />
         <Route exact path='/leagues' component={Leagues} />
         <Route exact path='/leagues/new' component={NewLeagueForm} />
         <Route exact path='/leagues/:id' component={League} />
