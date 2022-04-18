@@ -1,12 +1,13 @@
 import React from "react";
-import { Divider, Drawer, List, Typography } from "@material-ui/core";
+import { Typography, AppBar, Toolbar, Grid, ListItem } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import FlagIcon from "@material-ui/icons/Flag";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import useStyles from "utils/styles";
 import Home from "components/pages/home/Home";
-import ListItemLink from "components/common/ListItemLink";
+import NavLink from "components/common/NavLink";
+import { Page } from "components/common/Page";
 import Leagues from "components/pages/leagues/Leagues";
 import Race from "components/pages/race/Race";
 import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
@@ -71,47 +72,38 @@ function Title() {
   );
 }
 
-// TODO: make this responsive for mobile
-// large screens should be persitent with site title on sidebar
-// small screens should move site title to center toolbar and add hamburger menu
-function Sidebar() {
+function TopBar() {
   const classes = useStyles();
 
   return (
-    <Drawer
-      variant="permanent"
-      ModalProps={{
-        keepMounted: true, // Better open performance on mobile.
-      }}
-      className={classes.drawer}
-      classes={{
-        paper: classes.drawer,
-      }}
-    >
-      <Title />
-      <Divider />
-      <List>
-        <ListItemLink to="/" primary="Home" icon={<HomeIcon />} />
-        <ListItemLink to="/leagues" primary="Leagues" icon={<FlagIcon />} />
-      </List>
-    </Drawer>
-  );
+    <AppBar position="static" className={classes.navBar}>
+      <Toolbar disableGutters>
+        <Title />
+        <Grid container>
+          <NavLink to="/" primary="Home" icon={<HomeIcon />} />
+          <NavLink to="/leagues" primary="Leagues" icon={<FlagIcon />} />
+        </Grid>
+      </Toolbar>
+    </AppBar>
+  )
 }
 
 function App() {
   const classes = useStyles();
 
   return (
-    <div className={classes.root}>
-      <Sidebar />
-      <Switch>
-        <Route exact path="/" component={Home} />
-        <Route exact path="/leagues" component={Leagues} />
-        <Route exact path="/leagues/new" component={NewLeagueForm} />
-        <Route exact path="/leagues/:id" component={League} />
-        <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
-      </Switch>
-    </div>
+    <React.Fragment>
+      <TopBar />
+      <Page>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/leagues" component={Leagues} />
+          <Route exact path="/leagues/new" component={NewLeagueForm} />
+          <Route exact path="/leagues/:id" component={League} />
+          <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
+        </Switch>
+      </Page>
+    </React.Fragment>
   );
 }
 

@@ -27,6 +27,12 @@ const useStyles = makeStyles((theme) => ({
   hide: {
     display: 'none',
   },
+  navBar: {
+    whitespace: 'nowrap',
+    flexShrink: 0,
+    height: theme.spacing(8),
+    backgroundColor: theme.palette.primary.main,
+  },
   drawer: {
     width: drawerWidth,
     flexShrink: 0,
@@ -56,6 +62,8 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: 'none',
     boxShadow: 'none',
     color: 'white',
+    width: '160px',
+    minWidth: '160px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -74,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
     paddingTop: theme.spacing(5),
+    maxWidth: '900px',
   },
 }));
 
