@@ -105,7 +105,7 @@ export default function Home() {
       </Grid>
       <Grid item xs={12} style={{ marginTop: "20px" }}>
         <Typography variant="caption">
-          This is website is maintained by{" "}
+          This website is maintained by{" "}
           <Link href="https://github.com/blackmichael">Michael Black</Link>.
           Neither the website or its maintainers are affiliated with Formula 1
           Racing.
