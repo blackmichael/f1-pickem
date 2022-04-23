@@ -32,11 +32,12 @@ const getItemStyle = (isDragging, draggableStyle, index) => ({
   margin: `0 0 ${grid}px 0`,
   background: index > 9 ? "grey" : "white",
   display: "flex",
+  maxWidth: '350px',
   ...draggableStyle,
 });
 
 const getListStyle = (isDraggingOver) => ({
-  border: isDraggingOver ? "1px dotted red" : "none",
+  border: isDraggingOver ? "1px dotted grey" : "none",
   padding: grid,
   // width: '75%',
   // paddingLeft: '25%',
@@ -82,7 +83,7 @@ export default function Picks(props) {
   });
 
   return (
-    <Grid container style={{ width: "75%", paddingLeft: "25%" }}>
+    <Grid container>
       <Grid item xs={12}>
         {submittedAt != "" ? (
           <Typography variant="caption">
