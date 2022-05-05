@@ -54,6 +54,19 @@ Resources:
             Path: '/race-scores/{league}/{race_id}'
             Method: GET
 
+  GetRacesLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: get-races.out
+      Timeout: 30
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/races/{season}'
+            Method: GET
+
 
 Outputs:
   Endpoint:

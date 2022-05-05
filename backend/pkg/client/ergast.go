@@ -9,12 +9,14 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/pkg/errors"
 )
 
 type RaceDataClient interface {
 	GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error)
+	GetRaces(ctx context.Context, season string) (domain.Races, error)
 }
 
 type ergastClient struct {
@@ -178,4 +180,126 @@ func (api ergastClient) GetRaceResults(ctx context.Context, season, raceNumber s
 		RaceDate:   race.Date,
 		Results:    results,
 	}, nil
+}
+
+type racesResponse struct {
+	MRData struct {
+		RaceTable struct {
+			Races []struct {
+				Circuit struct {
+					Location struct {
+						Country  string `json:"country"`
+						Lat      string `json:"lat"`
+						Locality string `json:"locality"`
+						Long     string `json:"long"`
+					} `json:"Location"`
+					CircuitID   string `json:"circuitId"`
+					CircuitName string `json:"circuitName"`
+					URL         string `json:"url"`
+				} `json:"Circuit"`
+				FirstPractice struct {
+					Date string `json:"date"`
+					Time string `json:"time"`
+				} `json:"FirstPractice"`
+				Qualifying struct {
+					Date string `json:"date"`
+					Time string `json:"time"`
+				} `json:"Qualifying"`
+				SecondPractice struct {
+					Date string `json:"date"`
+					Time string `json:"time"`
+				} `json:"SecondPractice"`
+				Sprint struct {
+					Date string `json:"date"`
+					Time string `json:"time"`
+				} `json:"Sprint"`
+				ThirdPractice struct {
+					Date string `json:"date"`
+					Time string `json:"time"`
+				} `json:"ThirdPractice"`
+				Date     string `json:"date"`
+				RaceName string `json:"raceName"`
+				Round    string `json:"round"`
+				Season   string `json:"season"`
+				Time     string `json:"time"`
+				URL      string `json:"url"`
+			} `json:"Races"`
+			Season string `json:"season"`
+		} `json:"RaceTable"`
+		Limit  string `json:"limit"`
+		Offset string `json:"offset"`
+		Series string `json:"series"`
+		Total  string `json:"total"`
+		URL    string `json:"url"`
+		Xmlns  string `json:"xmlns"`
+	} `json:"MRData"`
+}
+
+func (api ergastClient) GetRaces(ctx context.Context, season string) (domain.Races, error) {
+	log.Printf("fetching races for season:%s\n", season)
+
+	client := http.DefaultClient
+	url := fmt.Sprintf("%s/api/f1/%s.json", api.baseUrl, season)
+	req, err := http.NewRequestWithContext(ctx, "GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		log.Printf("ERROR: failed to fetch races, code: %d\n", resp.StatusCode)
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("ERROR: unable to read response body (%s)\n", err.Error())
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	var _racesResponse racesResponse
+	if err := json.Unmarshal(body, &_racesResponse); err != nil {
+		log.Printf("ERROR: unable to parse response body (%s)\n", err.Error())
+		return nil, err
+	}
+
+	numOfRaces := len(_racesResponse.MRData.RaceTable.Races)
+	if numOfRaces == 0 {
+		return nil, nil
+	}
+
+	// TODO handle this better
+	if _racesResponse.MRData.Total >= _racesResponse.MRData.Limit {
+		log.Printf("unhandled paginated race schedule, season: %s\n",season)
+		return nil, errors.New("unhandled paginated result")
+	}
+
+	races := make(domain.Races, numOfRaces, numOfRaces)
+	for i, race := range _racesResponse.MRData.RaceTable.Races {
+		_, err := strconv.Atoi(race.Round)
+		if err != nil {
+			log.Printf("ERROR: failed to parse race round, race: %#v\n", race)
+			return nil, errors.Wrap(err, "failed to parse race round")
+		}
+
+		races[i] = &domain.Race{
+			RaceName: race.RaceName,
+			RaceNumber: race.Round,
+			Season: race.Season,
+			RaceDate: race.Date,
+		}
+		datetime := fmt.Sprintf("%sT%s", race.Date, race.Time)
+		races[i].StartTime, err = time.Parse(time.RFC3339, datetime)
+		if err != nil {
+			log.Printf("ERROR: failed to parse race start time: %v\n", race)
+			return nil, errors.Wrap(err, "failed to parse race start time")
+		}
+	}
+
+	return races, nil
 }
