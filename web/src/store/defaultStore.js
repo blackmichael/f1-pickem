@@ -50,6 +50,12 @@ const races = List([
     date: '2022-04-24',
   },
   {
+    id: "20225",
+    name: "Miami Grand Prix",
+    winners: [],
+    date: "2022-05-08"
+  },
+  {
     id: '20230101',
     name: 'TEST RACE',
     winners: ['f1pickem.com'],
