@@ -15,7 +15,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 )
 
-func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
+func (h getRacesHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("incoming request: %s\n", request.PathParameters)
 
 	season, ok := request.PathParameters["season"]
@@ -23,25 +23,20 @@ func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIG
 		return util.MessageResponse(400, "missing path parameter: season"), nil
 	}
 
-	raceNumber, ok := request.PathParameters["race_number"]
-	if !ok {
-		return util.MessageResponse(400, "missing path parameter: race_number"), nil
-	}
-
 	// read race data from db
-	raceResults, err := h.raceResultsRepository.GetRaceResults(ctx, season, raceNumber)
+	races, err := h.racesRepository.GetRaces(ctx, season)
 	if err != nil {
 		return util.MessageResponse(500, "failed to get race data"), err
 	}
 
-	if raceResults == nil {
-		// if race has no results, fetch them from api
-		raceResults, err = h.raceDataClient.GetRaceResults(ctx, season, raceNumber)
+	if races == nil {
+		// if races are not available, fetch them from api
+		races, err = h.raceDataClient.GetRaces(ctx, season)
 		if err != nil {
-			return util.MessageResponse(500, "unable to get race results"), err
+			return util.MessageResponse(500, "unable to get races"), err
 		}
 
-		if raceResults == nil {
+		if races == nil {
 			// send a 204 - we don't have results available
 			return events.APIGatewayProxyResponse{
 				StatusCode: 204,
@@ -50,13 +45,13 @@ func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIG
 		}
 
 		// if api has results, write them to db
-		err = h.raceResultsRepository.SaveRaceResults(ctx, raceResults)
+		err = h.racesRepository.SaveRaces(ctx, races)
 		if err != nil {
 			return util.MessageResponse(500, "failed to save race data"), err
 		}
 	}
 
-	response, err := json.Marshal(raceResults)
+	response, err := json.Marshal(races)
 	if err != nil {
 		return util.MessageResponse(500, "unable to marshal response"), err
 	}
@@ -69,13 +64,13 @@ func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIG
 	}, nil
 }
 
-type fetchRaceResultsHandler struct {
-	sess                  *session.Session
-	raceResultsRepository dynamo.RaceResultsRepository
-	raceDataClient        client.RaceDataClient
+type getRacesHandler struct {
+	sess *session.Session
+	racesRepository dynamo.RacesRepository
+	raceDataClient client.RaceDataClient
 }
 
-func newFetchRaceResultsHandler() *fetchRaceResultsHandler {
+func newGetRacesHandler() *getRacesHandler {
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		Config: aws.Config{
 			Region: aws.String("us-east-2"),
@@ -87,12 +82,14 @@ func newFetchRaceResultsHandler() *fetchRaceResultsHandler {
 		log.Printf("Request: %s/%s, Params: %s\n", r.ClientInfo.ServiceName, r.Operation.Name, r.Params)
 	})
 
-	raceResultsRepo := dynamo.NewRaceResultsRepository(sess)
-	client := client.NewErgastClient(util.ERGAST_URL)
-	return &fetchRaceResultsHandler{sess, raceResultsRepo, client}
+	return &getRacesHandler{
+		sess: sess,
+		racesRepository: dynamo.NewRacesRepository(sess),
+		raceDataClient: client.NewErgastClient(util.ERGAST_URL),
+	}
 }
 
 func main() {
-	handler := newFetchRaceResultsHandler()
+	handler := newGetRacesHandler()
 	lambda.Start(handler.Handle)
 }

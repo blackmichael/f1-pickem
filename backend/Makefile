@@ -20,6 +20,7 @@ local:
 	go build -o submit-picks.out ./cmd/submit-picks/main.go
 	go build -o fetch-race-results.out ./cmd/fetch-race-results/main.go
 	go build -o get-race-scores.out ./cmd/get-race-scores/main.go
+	go build -o get-races.out ./cmd/get-races/main.go
 
 # compile the code to run in Lambda (local or real)
 .PHONY: lambda
