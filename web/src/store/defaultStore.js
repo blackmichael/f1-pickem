@@ -123,6 +123,16 @@ const users = List([
     email: 'tarekfmarei@gmail.com',
     display_name: 'Tarek',
   },
+  {
+    id: '12',
+    email: 'tyler.w.nord@gmail.com',
+    display_name: 'TNord',
+  },
+  {
+    id: '13',
+    email: 'norr.peder@gmail.com',
+    display_name: 'Peder',
+  }
 ]);
 
 export function getUserByEmail(email) {
