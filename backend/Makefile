@@ -39,7 +39,7 @@ fmt:
 
 .PHONY: api
 api: build/lambda
-	sam local start-api
+	sam local start-api -p 3001
 
 .PHONY: package
 package: build/lambda

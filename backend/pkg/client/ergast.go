@@ -292,6 +292,7 @@ func (api ergastClient) GetRaces(ctx context.Context, season string) (domain.Rac
 			RaceNumber: race.Round,
 			Season:     race.Season,
 			RaceDate:   race.Date,
+			RaceId:     domain.GetRaceId(race.Season, race.Round),
 		}
 		datetime := fmt.Sprintf("%sT%s", race.Date, race.Time)
 		races[i].StartTime, err = time.Parse(time.RFC3339, datetime)
