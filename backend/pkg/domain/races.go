@@ -6,7 +6,7 @@ import (
 
 type Race struct {
 	// Partition Key
-	Season     string    `dynamodbav:"Season" json:"season"`
+	Season string `dynamodbav:"Season" json:"season"`
 	// Sort Key
 	RaceNumber string    `dynamodbav:"RaceNumber" json:"race_number"`
 	RaceName   string    `dynamodbav:"RaceName" json:"race_name"`

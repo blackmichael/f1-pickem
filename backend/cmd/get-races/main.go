@@ -2,6 +2,7 @@ package main
 
 import (
 	"blackmichael/f1-pickem/pkg/client"
+	"blackmichael/f1-pickem/pkg/domain"
 	"blackmichael/f1-pickem/pkg/dynamo"
 	"blackmichael/f1-pickem/pkg/util"
 	"context"
@@ -14,6 +15,10 @@ import (
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/aws/session"
 )
+
+type RacesResponse struct {
+	Races domain.Races `json:"races"`
+}
 
 func (h getRacesHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 	log.Printf("incoming request: %s\n", request.PathParameters)
@@ -51,7 +56,9 @@ func (h getRacesHandler) Handle(ctx context.Context, request events.APIGatewayPr
 		}
 	}
 
-	response, err := json.Marshal(races)
+	response, err := json.Marshal(RacesResponse{
+		Races: races,
+	})
 	if err != nil {
 		return util.MessageResponse(500, "unable to marshal response"), err
 	}
@@ -65,9 +72,9 @@ func (h getRacesHandler) Handle(ctx context.Context, request events.APIGatewayPr
 }
 
 type getRacesHandler struct {
-	sess *session.Session
+	sess            *session.Session
 	racesRepository dynamo.RacesRepository
-	raceDataClient client.RaceDataClient
+	raceDataClient  client.RaceDataClient
 }
 
 func newGetRacesHandler() *getRacesHandler {
@@ -83,9 +90,9 @@ func newGetRacesHandler() *getRacesHandler {
 	})
 
 	return &getRacesHandler{
-		sess: sess,
+		sess:            sess,
 		racesRepository: dynamo.NewRacesRepository(sess),
-		raceDataClient: client.NewErgastClient(util.ERGAST_URL),
+		raceDataClient:  client.NewErgastClient(util.ERGAST_URL),
 	}
 }
 

@@ -275,7 +275,7 @@ func (api ergastClient) GetRaces(ctx context.Context, season string) (domain.Rac
 
 	// TODO handle this better
 	if _racesResponse.MRData.Total >= _racesResponse.MRData.Limit {
-		log.Printf("unhandled paginated race schedule, season: %s\n",season)
+		log.Printf("unhandled paginated race schedule, season: %s\n", season)
 		return nil, errors.New("unhandled paginated result")
 	}
 
@@ -288,10 +288,10 @@ func (api ergastClient) GetRaces(ctx context.Context, season string) (domain.Rac
 		}
 
 		races[i] = &domain.Race{
-			RaceName: race.RaceName,
+			RaceName:   race.RaceName,
 			RaceNumber: race.Round,
-			Season: race.Season,
-			RaceDate: race.Date,
+			Season:     race.Season,
+			RaceDate:   race.Date,
 		}
 		datetime := fmt.Sprintf("%sT%s", race.Date, race.Time)
 		races[i].StartTime, err = time.Parse(time.RFC3339, datetime)
