@@ -21,12 +21,17 @@ import { AntTab, AntTabs, TabPanel } from "components/common/Tabs";
 import { getRace, getPicks, getLeagueSummary } from "store/defaultStore";
 import { useDispatch, useSelector } from "react-redux";
 import { getLeagues } from "store/actions/leaguesActions";
+import { getRaces } from "store/actions/racesActions";
 
 export default function Race(props) {
   const dispatch = useDispatch();
   const leaguesState = useSelector((state) => state.leagues);
-  const { loading, error, leaguesMap } = leaguesState;
+  const { leagueLoading, leagueError, leaguesMap } = leaguesState;
   const leagueInfo = leaguesMap.get(props.match.params.leagueId, {});
+
+  const racesState = useSelector((state) => state.races);
+  const { loading, error, raceById } = racesState;
+  const raceData = raceById[props.match.params.raceId] || {};
 
   useEffect(() => {
     // only fetch leagues info if it's not available
@@ -35,10 +40,9 @@ export default function Race(props) {
     }
   }, [dispatch]);
 
-  const [raceData, setRaceData] = useState({});
   useEffect(() => {
-    setRaceData(getRaceById(props.match.params.raceId));
-  });
+    dispatch(getRaces(leagueInfo.season))
+  }, [dispatch, leagueInfo.season]);
 
   const [tab, setTab] = useState(0);
   const handleTabChange = (event, newValue) => {
@@ -48,7 +52,7 @@ export default function Race(props) {
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography variant="h3">{raceData.name}</Typography>
+        <Typography variant="h3">{raceData.race_name}</Typography>
         <Subtitle>
           {leagueInfo.name} - {leagueInfo.season} Season
         </Subtitle>

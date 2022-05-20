@@ -25,6 +25,7 @@ export default function(state = initialState, action) {
       return {
         loading: false,
         error: action.payload,
+        leaguesList: [],
       };
 
     default:

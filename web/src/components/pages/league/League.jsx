@@ -48,7 +48,7 @@ export default function League(props) {
           <AntTab label="Scoreboard" />
         </AntTabs>
         <TabPanel value={tab} index={0}>
-          <Races data={races} leagueId={leagueInfo.id} />
+          <Races data={races} leagueId={leagueInfo.id} season={leagueInfo.season} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <Scoreboard data={leagueInfo.scores} />

@@ -15,9 +15,21 @@ import {
   StyledTableRow,
 } from "components/common/StyledTable";
 import React from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getRaces } from "store/actions/racesActions";
 
 export default function Races(props) {
-  const races = props.data || [];
+  const dispatch = useDispatch();
+  const racesState = useSelector((state) => state.races);
+  const { loading, error, racesBySeason } = racesState;
+  let races = (racesBySeason[props.season] || []);
+
+  useEffect(() => {
+    if (!racesBySeason[props.season] && props.season !== undefined) {
+      dispatch(getRaces(props.season));
+    }
+  }, [dispatch, props.season]);
 
   return (
     <Grid item xs={12}>
@@ -27,18 +39,16 @@ export default function Races(props) {
             <TableRow>
               <StyledTableCell>Race</StyledTableCell>
               <StyledTableCell>Date</StyledTableCell>
-              <StyledTableCell>Winners</StyledTableCell>
               <StyledTableCell>Details</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {races
-              .sort((a, b) => ("" + a.date).localeCompare(b.date))
-              .map((race, idx) => (
-                <StyledTableRow key={race.name + idx}>
-                  <StyledTableCell>{race.name}</StyledTableCell>
-                  <StyledTableCell>{race.date}</StyledTableCell>
-                  <StyledTableCell>{race.winners.join(", ")}</StyledTableCell>
+              .sort((a, b) => a.race_date.localeCompare(b.race_date))
+              .map((race) => (
+                <StyledTableRow key={race.id}>
+                  <StyledTableCell>{race.race_name}</StyledTableCell>
+                  <StyledTableCell>{race.race_date}</StyledTableCell>
                   <StyledTableCell>
                     <LinkButton
                       text="View"

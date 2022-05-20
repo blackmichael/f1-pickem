@@ -6,3 +6,6 @@ export const SUBMIT_PICKS_ERROR = 'SUBMIT_PICKS_ERROR';
 
 export const GET_RACE_SCORES = 'GET_RACE_SCORES';
 export const GET_RACE_SCORES_ERROR = 'GET_RACE_SCORES_ERROR';
+
+export const GET_RACES = 'GET_RACES';
+export const GET_RACES_ERROR = 'GET_RACES_ERROR';
