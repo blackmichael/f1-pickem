@@ -6,6 +6,12 @@ import reportWebVitals from "./reportWebVitals";
 import { CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import { getLeagues } from "store/actions/leaguesActions";
+import { getRaces } from "store/actions/racesActions";
+
+// pre-fetch to optimize page rendering
+store.dispatch(getLeagues())
+store.dispatch(getRaces((new Date()).getFullYear()))
 
 ReactDOM.render(
   <React.StrictMode>
