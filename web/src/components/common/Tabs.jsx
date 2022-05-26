@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Page from "components/common/Page";
+import { Page } from "components/common/Page";
 import {
   Box,
   Grid,
@@ -64,7 +64,7 @@ export function TabPanel(props) {
     >
       {value === index && (
         <Box p={3}>
-          <Typography>{children}</Typography>
+          <Page>{children}</Page>
         </Box>
       )}
     </div>

@@ -22,16 +22,14 @@ import { getRace, getPicks, getLeagueSummary } from "store/defaultStore";
 import { useDispatch, useSelector } from "react-redux";
 import { getLeagues } from "store/actions/leaguesActions";
 import { getRaces } from "store/actions/racesActions";
+import { getRaceScores } from "store/actions/raceScoresActions";
 
 export default function Race(props) {
   const dispatch = useDispatch();
+
   const leaguesState = useSelector((state) => state.leagues);
   const { leagueLoading, leagueError, leaguesMap } = leaguesState;
   const leagueInfo = leaguesMap.get(props.match.params.leagueId, {});
-
-  const racesState = useSelector((state) => state.races);
-  const { loading, error, raceById } = racesState;
-  const raceData = raceById[props.match.params.raceId] || {};
 
   useEffect(() => {
     // only fetch leagues info if it's not available
@@ -40,9 +38,23 @@ export default function Race(props) {
     }
   }, [dispatch]);
 
+  const racesState = useSelector((state) => state.races);
+  const { racesLoading, racesError, raceById } = racesState;
+  const raceData = raceById[props.match.params.raceId] || {};
+
   useEffect(() => {
-    dispatch(getRaces(leagueInfo.season))
+    if (leagueInfo.season !== undefined) {
+      dispatch(getRaces(leagueInfo.season))
+    }
   }, [dispatch, leagueInfo.season]);
+
+  const raceScoresState = useSelector((state) => state.raceScores);
+  const { raceScoresLoading, raceScoresError, raceScoresMap } = raceScoresState;
+  const raceScores = raceScoresMap.get(props.raceId, { user_scores: [] });
+
+  useEffect(() => {
+    dispatch(getRaceScores(props.match.params.leagueId, props.match.params.raceId));
+  }, [dispatch]);
 
   const [tab, setTab] = useState(0);
   const handleTabChange = (event, newValue) => {
