@@ -9,7 +9,6 @@ const initialState = {
 export default function(state = initialState, action) {
   switch (action.type) {
     case GET_RACE_SCORES:
-      console.log(action);
       return {
         ...state,
         // instead of replacing the attribute, just replace the race score entry
