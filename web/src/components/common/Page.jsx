@@ -7,9 +7,11 @@ export function Page({ children }) {
 
   return (
     <Container className={classes.content}>
-      <Grid container spacing={3}>
-        {children}
-      </Grid>
+      <Container maxWidth='sm'>
+        <Grid container spacing={2}>
+          {children}
+        </Grid>
+      </Container>
     </Container>
   );
 }

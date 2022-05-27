@@ -19,7 +19,6 @@ export default function NavLink(props) {
       <ListItem 
         button 
         disableGutters={isMobile} 
-        style={{paddingLeft: "16px"}}
         component={renderLink} 
     >
         {icon}

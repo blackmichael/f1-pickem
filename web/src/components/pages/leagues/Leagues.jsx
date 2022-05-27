@@ -36,7 +36,7 @@ export default function Leagues(props) {
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography variant="h3">Leagues</Typography>
+        <Typography variant="h4">Leagues</Typography>
       </Grid>
       <Grid item xs={12}>
         <LinkButton

@@ -13,16 +13,10 @@ import {
 } from "@material-ui/core";
 import { Page } from "components/common/Page";
 
-export default function Home() {
+export default function Info() {
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography variant="h3">Welcome to F1 Pick 'Em!</Typography>
-        <Typography variant="subtitle1">
-          A hobby site for Formula 1 racing picks.
-        </Typography>
-      </Grid>
-      <Grid item xs={12} style={{ marginTop: "20px", width: "50%" }}>
         <Typography variant="h5">How It Works</Typography>
         <Typography variant="body1">
           Join a league with your friends, and pick the order you think the Top
