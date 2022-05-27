@@ -5,13 +5,15 @@ import FlagIcon from "@material-ui/icons/Flag";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
 import useStyles from "utils/styles";
-import Home from "components/pages/home/Home";
+import Info from "components/pages/info/Info";
 import NavLink from "components/common/NavLink";
 import { Page } from "components/common/Page";
 import Leagues from "components/pages/leagues/Leagues";
 import Race from "components/pages/race/Race";
 import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
 import League from "components/pages/league/League";
+import { AccountCircleOutlined, HelpOutlineOutlined } from "@material-ui/icons";
+import Profile from "components/pages/profile/Profile";
 
 const theme = createMuiTheme({
   palette: {
@@ -77,11 +79,17 @@ function TopBar() {
 
   return (
     <AppBar position="static" className={classes.navBar}>
-      <Toolbar disableGutters>
-        <Title />
-        <Grid container>
-          <NavLink to="/" primary="Home" icon={<HomeIcon />} />
-          <NavLink to="/leagues" primary="Leagues" icon={<FlagIcon />} />
+      <Toolbar>
+        <Grid container direction="row" justify="space-between" alignItems="center">
+          <Grid item>
+            <NavLink to="/profile" icon={<AccountCircleOutlined />} />
+          </Grid>
+          <Grid item>
+            <Title />
+          </Grid>
+          <Grid item>
+            <NavLink to="/info" icon={<HelpOutlineOutlined />} />
+          </Grid>
         </Grid>
       </Toolbar>
     </AppBar>
@@ -96,7 +104,9 @@ function App() {
       <TopBar />
       <Page>
         <Switch>
-          <Route exact path="/" component={Home} />
+          <Route exact path="/" component={Leagues} />
+          <Route exact path="/profile" component={Profile} />
+          <Route exact path="/info" component={Info} />
           <Route exact path="/leagues" component={Leagues} />
           <Route exact path="/leagues/new" component={NewLeagueForm} />
           <Route exact path="/leagues/:id" component={League} />

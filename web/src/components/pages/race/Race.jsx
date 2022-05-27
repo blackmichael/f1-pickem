@@ -64,7 +64,7 @@ export default function Race(props) {
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography variant="h3">{raceData.race_name}</Typography>
+        <Typography variant="h4">{raceData.race_name}</Typography>
         <Subtitle>
           {leagueInfo.name} - {leagueInfo.season} Season
         </Subtitle>

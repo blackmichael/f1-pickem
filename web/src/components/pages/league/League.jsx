@@ -39,7 +39,7 @@ export default function League(props) {
   return (
     <Page>
       <Grid item xs={12}>
-        <Typography variant="h3">{leagueInfo.name}</Typography>
+        <Typography variant="h4">{leagueInfo.name}</Typography>
         <Subtitle>{leagueInfo.season} Season</Subtitle>
       </Grid>
       <Grid item xs={12}>
