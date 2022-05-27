@@ -107,20 +107,18 @@ function App() {
   }, [location]);
 
   return (
-    <React.Fragment>
+    <>
       <TopBar />
-      <Page>
-        <Switch>
-          <Route exact path="/" component={Leagues} />
-          <Route exact path="/profile" component={Profile} />
-          <Route exact path="/info" component={Info} />
-          <Route exact path="/leagues" component={Leagues} />
-          <Route exact path="/leagues/new" component={NewLeagueForm} />
-          <Route exact path="/leagues/:id" component={League} />
-          <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
-        </Switch>
-      </Page>
-    </React.Fragment>
+      <Switch>
+        <Route exact path="/" component={Leagues} />
+        <Route exact path="/profile" component={Profile} />
+        <Route exact path="/info" component={Info} />
+        <Route exact path="/leagues" component={Leagues} />
+        <Route exact path="/leagues/new" component={NewLeagueForm} />
+        <Route exact path="/leagues/:id" component={League} />
+        <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
+      </Switch>
+    </>
   );
 }
 

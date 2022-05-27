@@ -17,12 +17,10 @@ import { getLeagues } from "store/actions/leaguesActions";
 
 export default function League(props) {
   const dispatch = useDispatch();
+
   const leaguesState = useSelector((state) => state.leagues);
   const { loading, error, leaguesMap } = leaguesState;
   const leagueInfo = leaguesMap.get(props.match.params.id, {});
-
-  const races = getRaces();
-
   useEffect(() => {
     // only fetch leagues info if it's not available
     if (leaguesMap.size == 0) {
@@ -31,7 +29,6 @@ export default function League(props) {
   }, [dispatch]);
 
   const [tab, setTab] = useState(0);
-
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
   };
@@ -48,7 +45,7 @@ export default function League(props) {
           <AntTab label="Scoreboard" />
         </AntTabs>
         <TabPanel value={tab} index={0}>
-          <Races data={races} leagueId={leagueInfo.id} season={leagueInfo.season} />
+          <Races leagueId={leagueInfo.id} season={leagueInfo.season} />
         </TabPanel>
         <TabPanel value={tab} index={1}>
           <Scoreboard data={leagueInfo.scores} />
