@@ -33,35 +33,19 @@ export default function Races(props) {
 
   return (
     <Grid item xs={12}>
-      <TableContainer component={Paper}>
-        <StyledTable>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Race</StyledTableCell>
-              <StyledTableCell>Date</StyledTableCell>
-              <StyledTableCell>Details</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {races
-              .sort((a, b) => a.race_date.localeCompare(b.race_date))
-              .map((race) => (
-                <StyledTableRow key={race.id}>
-                  <StyledTableCell>{race.race_name}</StyledTableCell>
-                  <StyledTableCell>{race.race_date}</StyledTableCell>
-                  <StyledTableCell>
-                    <LinkButton
-                      text="View"
-                      to={"/leagues/" + props.leagueId + "/races/" + race.id}
-                      variant="contained"
-                      color="primary"
-                    />
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-          </TableBody>
-        </StyledTable>
-      </TableContainer>
+      {races
+        .sort((a, b) => a.race_date.localeCompare(b.race_date))
+        .map((race) => (
+          <LinkButton
+            text={race.race_name}
+            subtext={new Date(race.start_time).toLocaleDateString()}
+            to={"/leagues/" + props.leagueId + "/races/" + race.id}
+            variant="contained"
+            color="primary"
+            key={race.id}
+            width="300px"
+          />
+        ))}
     </Grid>
   );
 }
