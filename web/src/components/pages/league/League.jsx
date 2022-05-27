@@ -30,7 +30,7 @@ export default function League(props) {
     }
   }, [dispatch]);
 
-  const [tab, setTab] = React.useState(0);
+  const [tab, setTab] = useState(0);
 
   const handleTabChange = (event, newValue) => {
     setTab(newValue);

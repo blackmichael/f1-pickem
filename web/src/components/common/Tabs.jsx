@@ -54,19 +54,20 @@ export const AntTab = withStyles((theme) => ({
 export function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Page>{children}</Page>
-        </Box>
-      )}
-    </div>
-  );
+  if (value === index) {
+    return (
+      <Box
+        role="tabpanel"
+        hidden={value !== index}
+        id={`simple-tabpanel-${index}`}
+        aria-labelledby={`simple-tab-${index}`}
+        style={{marginTop: "20px"}}
+        {...other}
+      >
+        {children}
+      </Box>
+    )
+  }
+
+  return <></>
 }

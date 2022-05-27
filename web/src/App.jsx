@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, AppBar, Toolbar, Grid, ListItem } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import FlagIcon from "@material-ui/icons/Flag";
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { useLocation } from "react-router";
 import useStyles from "utils/styles";
 import Info from "components/pages/info/Info";
 import NavLink from "components/common/NavLink";
@@ -98,6 +99,12 @@ function TopBar() {
 
 function App() {
   const classes = useStyles();
+
+  // resets the page view to the top when rendering new routes
+  const location = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
 
   return (
     <React.Fragment>
