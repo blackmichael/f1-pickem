@@ -81,8 +81,8 @@ const useStyles = makeStyles((theme) => ({
   content: {
     display: 'flex',
     flexGrow: 1,
-    padding: theme.spacing(3),
-    // paddingTop: theme.spacing(5),
+    padding: theme.spacing(2),
+    paddingTop: theme.spacing(4),
     width: '100%',
     maxWidth: '600px',
   },
