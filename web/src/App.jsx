@@ -15,6 +15,7 @@ import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
 import League from "components/pages/league/League";
 import { AccountCircleOutlined, HelpOutlineOutlined } from "@material-ui/icons";
 import Profile from "components/pages/profile/Profile";
+import ErrorBoundary from "components/pages/error/ErrorBoundary";
 
 const theme = createMuiTheme({
   palette: {
@@ -110,13 +111,15 @@ function App() {
     <>
       <TopBar />
       <Switch>
-        <Route exact path="/" component={Leagues} />
-        <Route exact path="/profile" component={Profile} />
-        <Route exact path="/info" component={Info} />
-        <Route exact path="/leagues" component={Leagues} />
-        <Route exact path="/leagues/new" component={NewLeagueForm} />
-        <Route exact path="/leagues/:id" component={League} />
-        <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
+        <ErrorBoundary>
+          <Route exact path="/" component={Leagues} />
+          <Route exact path="/profile" component={Profile} />
+          <Route exact path="/info" component={Info} />
+          <Route exact path="/leagues" component={Leagues} />
+          <Route exact path="/leagues/new" component={NewLeagueForm} />
+          <Route exact path="/leagues/:id" component={League} />
+          <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
+        </ErrorBoundary>
       </Switch>
     </>
   );
