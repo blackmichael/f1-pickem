@@ -1,18 +1,24 @@
-import {GET_LEAGUES, GET_LEAGUES_ERROR} from '../types';
-import {Map} from 'immutable';
+import { GET_LEAGUES, GET_LEAGUES_ERROR, GET_LEAGUES_SUCCESS } from '../types';
+import { Map } from 'immutable';
 
 const initialState = {
   leaguesList: [],
   leaguesMap: Map({}),
-  loading: true,
+  loading: false,
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   const leaguesMap = {};
   switch (action.type) {
     case GET_LEAGUES:
+      return {
+        ...state,
+        loading: true,
+      }
+
+    case GET_LEAGUES_SUCCESS:
       action.payload.leagues.forEach(
-          (league) => (leaguesMap[league.id] = league),
+        (league) => (leaguesMap[league.id] = league),
       );
       return {
         ...state,
@@ -23,9 +29,9 @@ export default function(state = initialState, action) {
 
     case GET_LEAGUES_ERROR:
       return {
-        loading: false,
+        ...state,
         error: action.payload,
-        leaguesList: [],
+        loading: false,
       };
 
     default:

@@ -15,10 +15,3 @@ export function Page({ children }) {
     </Container>
   );
 }
-
-export const Subtitle = withStyles({
-  root: {
-    color: "grey",
-    paddingLeft: "0.25em",
-  },
-})(Typography);
