@@ -5,10 +5,12 @@ import {
   Grid,
   Typography,
 } from "@material-ui/core";
-import { Page, Subtitle } from "components/common/Page";
+import { Page } from "components/common/Page";
 import LinkButton from "components/common/LinkButton";
 import { getLeagues } from "store/actions/leaguesActions";
 import { getLeaguesResource } from "utils/resources";
+import { Subtitle } from "components/common/Subtitle";
+import { Loadable } from "components/common/Loadable";
 
 export default function Leagues(props) {
   const dispatch = useDispatch();
@@ -25,14 +27,16 @@ export default function Leagues(props) {
         <Typography variant="h4">Leagues</Typography>
         <Subtitle>Select a league or create a new one</Subtitle>
       </Grid>
-      <Divider variant="middle" style={{borderBottom: "1px solid #e8e8e8", width: "100%", marginBottom: "20px"}}/>
+      <Divider variant="middle" style={{ borderBottom: "1px solid #e8e8e8", width: "100%", marginBottom: "20px" }} />
       <Grid container item xs={12} direction="column">
-        {leaguesList
-          .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
-          .reverse()
-          .map((league) => (
-            <LeagueSelector data={league} key={league.id} />
-          ))}
+        <Loadable loading={loading} error={error}>
+          {leaguesList
+            .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
+            .reverse()
+            .map((league) => (
+              <LeagueSelector data={league} key={league.id} />
+            ))}
+        </Loadable>
       </Grid>
       <Grid item xs={12}>
         <LinkButton

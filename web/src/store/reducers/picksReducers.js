@@ -1,13 +1,19 @@
-import {SUBMIT_PICKS, SUBMIT_PICKS_ERROR} from '../types';
+import { SUBMIT_PICKS, SUBMIT_PICKS_ERROR, SUBMIT_PICKS_SUCCESS } from '../types';
 
 const initialState = {
   submittedAt: '',
-  loading: true,
+  loading: false,
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
   switch (action.type) {
     case SUBMIT_PICKS:
+      return {
+        ...state,
+        loading: true,
+      }
+
+    case SUBMIT_PICKS_SUCCESS:
       return {
         ...state,
         submittedAt: action.payload.submitted_at,
@@ -16,9 +22,9 @@ export default function(state = initialState, action) {
 
     case SUBMIT_PICKS_ERROR:
       return {
-        loading: false,
+        ...state,
         error: action.payload,
-        submittedAt: '',
+        loading: false,
       };
 
     default:

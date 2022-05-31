@@ -1,12 +1,13 @@
-import {GET_LEAGUES, GET_LEAGUES_ERROR} from 'store/types';
+import {GET_LEAGUES, GET_LEAGUES_ERROR, GET_LEAGUES_SUCCESS} from 'store/types';
 import axios from 'axios';
 import config from 'config';
 
 export const getLeagues = () => async (dispatch) => {
+  dispatch({type: GET_LEAGUES});
   try {
     const res = await axios.get(config.backendUrl + '/leagues');
     dispatch({
-      type: GET_LEAGUES,
+      type: GET_LEAGUES_SUCCESS,
       payload: res.data,
     });
   } catch (e) {

@@ -1,6 +1,7 @@
 import React, { Component } from "react";
-import { Page, Subtitle } from "components/common/Page";
+import { Page } from "components/common/Page";
 import { Grid, Typography } from "@material-ui/core";
+import { Subtitle } from "components/common/Subtitle";
 
 export default class ErrorBoundary extends Component {
     constructor(props) {
@@ -19,7 +20,7 @@ export default class ErrorBoundary extends Component {
                     <Grid item xs={12}>
                         <Typography variant="h4">Something went wrong</Typography>
                         <Subtitle>Please fix me</Subtitle>
-                    </Grid> 
+                    </Grid>
                 </Page>
             );
         }

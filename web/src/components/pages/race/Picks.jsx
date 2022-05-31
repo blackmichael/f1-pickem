@@ -15,6 +15,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { submitPicks } from "store/actions/picksActions";
 import { toDateTimeDisplayString } from "utils/time";
+import LoadingButton from '@mui/lab/LoadingButton';
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -39,8 +40,6 @@ const getItemStyle = (isDragging, draggableStyle, index) => ({
 const getListStyle = (isDraggingOver) => ({
   border: isDraggingOver ? "1px dotted grey" : "none",
   padding: grid,
-  // width: '75%',
-  // paddingLeft: '25%',
 });
 
 export default function Picks(props) {
@@ -99,9 +98,9 @@ export default function Picks(props) {
             label="Email Address"
             {...formik.getFieldProps("email")}
           />
-          <Button type="submit" variant="outlined">
+          <LoadingButton loading={loading} type="submit" variant="outlined">
             Submit
-          </Button>
+          </LoadingButton>
           {formik.touched.email && formik.errors.email ? (
             <Typography style={{ color: "red" }}>
               {formik.errors.email}
@@ -156,12 +155,3 @@ export default function Picks(props) {
     </Grid>
   );
 }
-
-const PickerSelector = withStyles((theme) => ({
-  root: {
-    "& .MuiTextField-root": {
-      margin: theme.spacing(1),
-      width: "25ch",
-    },
-  },
-}))(TextField);

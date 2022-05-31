@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Page, Subtitle } from "components/common/Page";
+import { Page } from "components/common/Page";
 import {
   Box,
   FormControl,
@@ -23,6 +23,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getLeagues } from "store/actions/leaguesActions";
 import { getRaces } from "store/actions/racesActions";
 import { getRaceScores } from "store/actions/raceScoresActions";
+import { Subtitle } from "components/common/Subtitle";
+import { Loadable } from "components/common/Loadable";
 
 export default function Race(props) {
   const dispatch = useDispatch();
@@ -63,30 +65,34 @@ export default function Race(props) {
 
   return (
     <Page>
-      <Grid item xs={12}>
-        <Typography variant="h4">{raceData.race_name}</Typography>
-        <Subtitle>
-          {leagueInfo.name} - {leagueInfo.season} Season
-        </Subtitle>
-      </Grid>
-      <Grid item xs={12}>
-        <AntTabs value={tab} onChange={handleTabChange} aria-label="views">
-          <AntTab label="Picks" />
-          <AntTab label="Results" />
-        </AntTabs>
-        <TabPanel value={tab} index={0}>
-          <Picks
-            leagueId={props.match.params.leagueId}
-            raceId={props.match.params.raceId}
-          />
-        </TabPanel>
-        <TabPanel value={tab} index={1}>
-          <Results
-            leagueId={props.match.params.leagueId}
-            raceId={props.match.params.raceId}
-          />
-        </TabPanel>
-      </Grid>
+      <Loadable loading={leagueLoading || racesLoading} error={leagueError || racesError}>
+        <Grid item xs={12}>
+          <Typography variant="h4">{raceData.race_name}</Typography>
+          <Subtitle>
+            {leagueInfo.name} - {leagueInfo.season} Season
+          </Subtitle>
+        </Grid>
+        <Grid item xs={12}>
+          <AntTabs value={tab} onChange={handleTabChange} aria-label="views">
+            <AntTab label="Picks" />
+            <AntTab label="Results" />
+          </AntTabs>
+          <TabPanel value={tab} index={0}>
+            <Picks
+              leagueId={props.match.params.leagueId}
+              raceId={props.match.params.raceId}
+            />
+          </TabPanel>
+          <TabPanel value={tab} index={1}>
+            <Loadable loading={raceScoresLoading} error={raceScoresError}>
+              <Results
+                leagueId={props.match.params.leagueId}
+                raceId={props.match.params.raceId}
+              />
+            </Loadable>
+          </TabPanel>
+        </Grid>
+      </Loadable>
     </Page>
   );
 }
