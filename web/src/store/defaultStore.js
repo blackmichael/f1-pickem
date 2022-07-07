@@ -132,6 +132,11 @@ const users = List([
     id: '13',
     email: 'norr.peder@gmail.com',
     display_name: 'Peder',
+  },
+  {
+    id: '14',
+    email: 'seanpbyrne21@gmail.com',
+    display_name: 'Sean',
   }
 ]);
 
