@@ -278,6 +278,7 @@ const driversList = List([
   'Kevin Magnussen',
   'Nicholas Latifi',
   'Alexander Albon',
+  'Nyck De Vries',
   'Nico Hulkenberg',
 ]);
 
