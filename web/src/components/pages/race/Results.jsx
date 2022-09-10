@@ -59,6 +59,8 @@ export default function Results(props) {
               .map((score, place) => {
                 let user = getUserById(score.user_id);
                 let displayName = "";
+                let NumCorArray = score.breakdown.filter(points == 25);
+                const NumCor = NumCorArray.length
                 if (user === undefined) {
                   displayName = "n/a";
                 } else {
@@ -69,6 +71,7 @@ export default function Results(props) {
                     <StyledTableCell>{place + 1}</StyledTableCell>
                     <StyledTableCell>{displayName}</StyledTableCell>
                     <StyledTableCell>{score.total_score}</StyledTableCell>
+                    <StyledTableCell>{NumCor}</StyledTableCell>
                   </StyledTableRow>
                 );
               })}
