@@ -1,5 +1,14 @@
 package domain
 
+import (
+	"log"
+	"unicode"
+
+	"golang.org/x/text/runes"
+	"golang.org/x/text/transform"
+	"golang.org/x/text/unicode/norm"
+)
+
 type driverPoints struct {
 	Driver         string `json:"driver"`
 	PickedPosition int    `json:"picked_position"`
@@ -18,10 +27,21 @@ type RaceScorer struct {
 	processedResults map[string]int
 }
 
+func removeAccents(name string) string {
+	transformer := transform.Chain(norm.NFD, runes.Remove(runes.In(unicode.Mn)), norm.NFC)
+	transformedName, _, err := transform.String(transformer, name)
+	if err != nil {
+		log.Printf("Failed to remove accents from name: %s", name)
+		return name
+	}
+
+	return transformedName
+}
+
 func NewRaceScorer(results *RaceResults) *RaceScorer {
 	processedResults := make(map[string]int)
 	for i, driver := range results.Results {
-		processedResults[driver] = i
+		processedResults[removeAccents(driver)] = i
 	}
 
 	return &RaceScorer{
@@ -35,7 +55,7 @@ func (rc *RaceScorer) GetScore(picks *RacePicks) *RaceScore {
 
 	scores := make([]*driverPoints, 0)
 	for pickedPos, driver := range picks.Picks {
-		actualPos, ok := rc.processedResults[driver]
+		actualPos, ok := rc.processedResults[removeAccents(driver)]
 		if !ok {
 			actualPos = -1
 		}
