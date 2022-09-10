@@ -51,6 +51,7 @@ export default function Results(props) {
               <StyledTableCell>Place</StyledTableCell>
               <StyledTableCell>Name</StyledTableCell>
               <StyledTableCell>Points</StyledTableCell>
+              <StyledTableCell>Drivers Picked Right</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -59,6 +60,8 @@ export default function Results(props) {
               .map((score, place) => {
                 let user = getUserById(score.user_id);
                 let displayName = "";
+                let NumCorArray = score.breakdown.filter(breakdown => breakdown.points == 25);
+                let NumCor = NumCorArray.length;
                 if (user === undefined) {
                   displayName = "n/a";
                 } else {
@@ -69,6 +72,7 @@ export default function Results(props) {
                     <StyledTableCell>{place + 1}</StyledTableCell>
                     <StyledTableCell>{displayName}</StyledTableCell>
                     <StyledTableCell>{score.total_score}</StyledTableCell>
+                    <StyledTableCell>{NumCor}</StyledTableCell>
                   </StyledTableRow>
                 );
               })}
