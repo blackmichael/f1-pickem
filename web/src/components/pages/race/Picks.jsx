@@ -1,21 +1,16 @@
 import {
-  Button,
   Grid,
-  MenuItem,
   Paper,
-  TextField,
   Typography,
-  withStyles,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { getDrivers } from "store/defaultStore";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { submitPicks } from "store/actions/picksActions";
 import { toDateTimeDisplayString } from "utils/time";
 import LoadingButton from '@mui/lab/LoadingButton';
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -49,6 +44,13 @@ export default function Picks(props) {
 
   const [drivers, setDrivers] = useState(getDrivers());
 
+  const { user } = useAuthenticator((context) => [context.user]);
+  const userId = user?.attributes?.sub;
+  if (!userId) {
+    // I might regret this
+    throw Error("userId missing from user attributes")
+  }
+
   const onDragEnd = (result) => {
     if (!result.destination) {
       return;
@@ -63,23 +65,15 @@ export default function Picks(props) {
     setDrivers(newOrder);
   };
 
-  const formik = useFormik({
-    initialValues: {
-      email: "",
-    },
-    validationSchema: Yup.object({
-      email: Yup.string().email("Invalid email address").required("Required"),
-    }),
-    onSubmit: (values) => {
-      let request = {
-        league_id: props.leagueId,
-        race_id: props.raceId,
-        user_id: values.email,
-        picks: drivers.slice(0, 10),
-      };
-      dispatch(submitPicks(request));
-    },
-  });
+  const onSubmit = () => {
+    let request = {
+      league_id: props.leagueId,
+      race_id: props.raceId,
+      user_id: userId,
+      picks: drivers.slice(0, 10),
+    };
+    dispatch(submitPicks(request));
+  }
 
   return (
     <Grid container>
@@ -92,65 +86,52 @@ export default function Picks(props) {
         {error ? <Typography variant="caption">{error}</Typography> : null}
       </Grid>
       <Grid item xs={12}>
-        <form onSubmit={formik.handleSubmit}>
-          <TextField
-            id="email"
-            label="Email Address"
-            {...formik.getFieldProps("email")}
-          />
-          <LoadingButton loading={loading} type="submit" variant="outlined">
-            Submit
-          </LoadingButton>
-          {formik.touched.email && formik.errors.email ? (
-            <Typography style={{ color: "red" }}>
-              {formik.errors.email}
-            </Typography>
-          ) : null}
-        </form>
-      </Grid>
-      <Grid item xs={12} style={{ paddingTop: "2em" }}>
-        <div>
-          <Typography variant="h5">
-            Click and drag to choose your top 10 drivers.
-          </Typography>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="droppable">
-              {(provided, snapshot) => (
-                <div
-                  {...provided.droppableProps}
-                  ref={provided.innerRef}
-                  style={getListStyle(snapshot.isDraggingOver)}
-                >
-                  {drivers.map((driver, index) => (
-                    <Draggable key={driver} draggableId={driver} index={index}>
-                      {(provided, snapshot) => (
-                        <Paper
-                          ref={provided.innerRef}
-                          {...provided.draggableProps}
-                          {...provided.dragHandleProps}
-                          elevation={3}
-                          style={getItemStyle(
-                            snapshot.isDragging,
-                            provided.draggableProps.style,
-                            index
-                          )}
+        <Typography variant="h6">
+          Click and drag to choose your top 10 drivers.
+        </Typography>
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="droppable">
+            {(provided, snapshot) => (
+              <div
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+                style={getListStyle(snapshot.isDraggingOver)}
+              >
+                {drivers.map((driver, index) => (
+                  <Draggable key={driver} draggableId={driver} index={index}>
+                    {(provided, snapshot) => (
+                      <Paper
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}
+                        elevation={3}
+                        style={getItemStyle(
+                          snapshot.isDragging,
+                          provided.draggableProps.style,
+                          index
+                        )}
+                      >
+                        <span style={{ flexBasis: "5%" }}>{index + 1}.</span>
+                        <span
+                          style={{ textAlign: "center", flexBasis: "90%" }}
                         >
-                          <span style={{ flexBasis: "5%" }}>{index + 1}.</span>
-                          <span
-                            style={{ textAlign: "center", flexBasis: "90%" }}
-                          >
-                            {driver}
-                          </span>
-                        </Paper>
-                      )}
-                    </Draggable>
-                  ))}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </div>
+                          {driver}
+                        </span>
+                      </Paper>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      </Grid>
+
+      <Grid item xs={12}>
+        <LoadingButton onClick={onSubmit} loading={loading} type="submit" variant="outlined">
+          Submit
+        </LoadingButton>
       </Grid>
     </Grid>
   );

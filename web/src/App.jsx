@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import { Typography, AppBar, Toolbar, Grid, ListItem } from "@material-ui/core";
 import HomeIcon from "@material-ui/icons/Home";
 import FlagIcon from "@material-ui/icons/Flag";
-import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
-import { BrowserRouter as Router, Link, Route, Switch } from "react-router-dom";
+import { createTheme, ThemeProvider } from "@material-ui/core/styles";
+import { BrowserRouter, BrowserRouter as Router, Link, Route, Routes, Switch } from "react-router-dom";
 import { useLocation } from "react-router";
 import useStyles from "utils/styles";
 import Info from "components/pages/info/Info";
@@ -13,11 +13,14 @@ import Leagues from "components/pages/leagues/Leagues";
 import Race from "components/pages/race/Race";
 import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
 import League from "components/pages/league/League";
-import { AccountCircleOutlined, HelpOutlineOutlined } from "@material-ui/icons";
+import { AccountCircleOutlined, AccountCircle, HelpOutlineOutlined } from "@material-ui/icons";
 import Profile from "components/pages/profile/Profile";
 import ErrorBoundary from "components/pages/error/ErrorBoundary";
+import Login from "components/pages/auth/Login";
+import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
+import { RequireAuth } from "components/pages/auth/RequireAuth";
 
-const theme = createMuiTheme({
+const theme = createTheme({
   palette: {
     common: {
       black: "#000",
@@ -59,9 +62,9 @@ const theme = createMuiTheme({
 function ThemedApp() {
   return (
     <ThemeProvider theme={theme}>
-      <Router>
+      <BrowserRouter>
         <App />
-      </Router>
+      </BrowserRouter>
     </ThemeProvider>
   );
 }
@@ -78,13 +81,15 @@ function Title() {
 
 function TopBar() {
   const classes = useStyles();
+  const { authStatus } = useAuthenticator(context => [context.authStatus]);
+  const isAuthenticated = (authStatus === "authenticated");
 
   return (
     <AppBar position="static" className={classes.navBar}>
       <Toolbar>
         <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item>
-            <NavLink to="/profile" icon={<AccountCircleOutlined />} />
+            <NavLink to="/profile" icon={isAuthenticated ? <AccountCircle /> : <AccountCircleOutlined />} />
           </Grid>
           <Grid item>
             <Title />
@@ -108,20 +113,45 @@ function App() {
   }, [location]);
 
   return (
-    <>
+    <Authenticator.Provider>
       <TopBar />
-      <Switch>
-        <ErrorBoundary>
-          <Route exact path="/" component={Leagues} />
-          <Route exact path="/profile" component={Profile} />
-          <Route exact path="/info" component={Info} />
-          <Route exact path="/leagues" component={Leagues} />
-          <Route exact path="/leagues/new" component={NewLeagueForm} />
-          <Route exact path="/leagues/:id" component={League} />
-          <Route exact path="/leagues/:leagueId/races/:raceId" component={Race} />
-        </ErrorBoundary>
-      </Switch>
-    </>
+      <ErrorBoundary>
+        <Routes>
+          <Route path="/" element={
+            <RequireAuth>
+              <Leagues />
+            </RequireAuth>
+          } />
+          <Route path="/login" element={<Login />} />
+          <Route path="/info" element={<Info />} />
+          <Route path="/profile" element={
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
+          } />
+          <Route path="/leagues" element={
+            <RequireAuth>
+              <Leagues />
+            </RequireAuth>
+          } />
+          <Route path="/leagues/new" element={
+            <RequireAuth>
+              <NewLeagueForm />
+            </RequireAuth>
+          } />
+          <Route path="/leagues/:id" element={
+            <RequireAuth>
+              <League />
+            </RequireAuth>
+          } />
+          <Route path="/leagues/:leagueId/races/:raceId" element={
+            <RequireAuth>
+              <Race />
+            </RequireAuth>
+          } />
+        </Routes>
+      </ErrorBoundary>
+    </Authenticator.Provider>
   );
 }
 

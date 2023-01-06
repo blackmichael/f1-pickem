@@ -25,13 +25,15 @@ import { getRaces } from "store/actions/racesActions";
 import { getRaceScores } from "store/actions/raceScoresActions";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
+import { useMatch } from "react-router-dom";
 
 export default function Race(props) {
   const dispatch = useDispatch();
+  const match = useMatch("/leagues/:leagueId/races/:raceId");
 
   const leaguesState = useSelector((state) => state.leagues);
   const { leagueLoading, leagueError, leaguesMap } = leaguesState;
-  const leagueInfo = leaguesMap.get(props.match.params.leagueId, {});
+  const leagueInfo = leaguesMap.get(match.params.leagueId, {});
 
   useEffect(() => {
     // only fetch leagues info if it's not available
@@ -42,7 +44,7 @@ export default function Race(props) {
 
   const racesState = useSelector((state) => state.races);
   const { racesLoading, racesError, raceById } = racesState;
-  const raceData = raceById[props.match.params.raceId] || {};
+  const raceData = raceById[match.params.raceId] || {};
 
   useEffect(() => {
     if (leagueInfo.season !== undefined) {
@@ -55,7 +57,7 @@ export default function Race(props) {
   const raceScores = raceScoresMap.get(props.raceId, { user_scores: [] });
 
   useEffect(() => {
-    dispatch(getRaceScores(props.match.params.leagueId, props.match.params.raceId));
+    dispatch(getRaceScores(match.params.leagueId, match.params.raceId));
   }, [dispatch]);
 
   const [tab, setTab] = useState(0);
@@ -79,15 +81,15 @@ export default function Race(props) {
           </AntTabs>
           <TabPanel value={tab} index={0}>
             <Picks
-              leagueId={props.match.params.leagueId}
-              raceId={props.match.params.raceId}
+              leagueId={match.params.leagueId}
+              raceId={match.params.raceId}
             />
           </TabPanel>
           <TabPanel value={tab} index={1}>
             <Loadable loading={raceScoresLoading} error={raceScoresError}>
               <Results
-                leagueId={props.match.params.leagueId}
-                raceId={props.match.params.raceId}
+                leagueId={match.params.leagueId}
+                raceId={match.params.raceId}
               />
             </Loadable>
           </TabPanel>

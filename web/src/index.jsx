@@ -8,6 +8,11 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import { getLeagues } from "store/actions/leaguesActions";
 import { getRaces } from "store/actions/racesActions";
+import amplifyConfig from 'utils/amplifyConfig';
+import { Amplify } from "aws-amplify";
+
+// configure auth
+Amplify.configure(amplifyConfig)
 
 // pre-fetch to optimize page rendering
 store.dispatch(getLeagues())
