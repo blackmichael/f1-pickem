@@ -12,13 +12,15 @@ import { getLeagues } from "store/actions/leaguesActions";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
 import { getRaces } from "store/actions/racesActions";
+import { useMatch, useResolvedPath } from "react-router-dom";
 
 export default function League(props) {
   const dispatch = useDispatch();
+  const match = useMatch("/leagues/:id");
 
   const leaguesState = useSelector((state) => state.leagues);
   const { leaguesLoading, leaguesError, leaguesMap } = leaguesState;
-  const leagueInfo = leaguesMap.get(props.match.params.id, {});
+  const leagueInfo = leaguesMap.get(match.params.id, {});
   useEffect(() => {
     // only fetch leagues info if it's not available
     if (leaguesMap.size == 0) {

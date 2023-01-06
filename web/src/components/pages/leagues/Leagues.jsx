@@ -27,7 +27,9 @@ export default function Leagues(props) {
         <Typography variant="h4">Leagues</Typography>
         <Subtitle>Select a league or create a new one</Subtitle>
       </Grid>
+
       <Divider variant="middle" style={{ borderBottom: "1px solid #e8e8e8", width: "100%", marginBottom: "20px" }} />
+
       <Grid container item xs={12} direction="column">
         <Loadable loading={loading} error={error}>
           {leaguesList
@@ -38,6 +40,7 @@ export default function Leagues(props) {
             ))}
         </Loadable>
       </Grid>
+
       <Grid item xs={12}>
         <LinkButton
           text="Create New League"
