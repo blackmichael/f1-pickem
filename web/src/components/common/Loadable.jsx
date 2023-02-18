@@ -13,7 +13,7 @@ export function Loadable(props) {
     )
   } else if (error) {
     return (
-      <Grid container item xs={12} justify="center">
+      <Grid container item xs={12} justify="center" style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
           <Subtitle>Unable to load data. Please refresh the page.</Subtitle>
       </Grid>
     )
