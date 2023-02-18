@@ -11,15 +11,32 @@ import { getLeagues } from "store/actions/leaguesActions";
 import { getLeaguesResource } from "utils/resources";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 export default function Leagues(props) {
   const dispatch = useDispatch();
+  const { user } = useAuthenticator((context) => [context.user]);
   const leaguesState = useSelector((state) => state.leagues);
   const { loading, error, leaguesList } = leaguesState;
 
   useEffect(() => {
-    dispatch(getLeagues());
+    if (user?.username) {
+      dispatch(getLeagues(user?.username));
+    }
   }, [dispatch]);
+
+  let leaguesComponents = leaguesList
+  .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
+  .reverse()
+  .map((league) => (
+    <LeagueSelector data={league} key={league.id} />
+  ));
+
+  const emptyListPlaceholder = (
+    <Grid item xs={12} style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
+        <Typography variant="h6">Nothing to see here!</Typography>
+    </Grid>
+  );
 
   return (
     <Page>
@@ -32,12 +49,7 @@ export default function Leagues(props) {
 
       <Grid container item xs={12} direction="column">
         <Loadable loading={loading} error={error}>
-          {leaguesList
-            .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
-            .reverse()
-            .map((league) => (
-              <LeagueSelector data={league} key={league.id} />
-            ))}
+          {leaguesComponents.length !== 0 ? leaguesComponents : emptyListPlaceholder}
         </Loadable>
       </Grid>
 
