@@ -318,10 +318,10 @@ func (r *leaguesRepository) GetLeagueToken(ctx context.Context, leagueID, reques
 				Keys: []map[string]*dynamodb.AttributeValue{
 					{
 						"PartitionKey": &dynamodb.AttributeValue{
-							S: aws.String(getLeagueID(leagueID)),
+							S: aws.String(tokenKey),
 						},
 						"SortKey": &dynamodb.AttributeValue{
-							S: aws.String(tokenKey),
+							S: aws.String(getLeagueID(leagueID)),
 						},
 					},
 					{
@@ -353,8 +353,8 @@ func (r *leaguesRepository) GetLeagueToken(ctx context.Context, leagueID, reques
 		RequesterStatus: domain.NoStatus,
 	}
 	for _, item := range items {
-		if item.PartitionKey == getLeagueID(leagueID) &&
-			item.SortKey == tokenKey {
+		if item.PartitionKey == tokenKey &&
+			item.SortKey == getLeagueID(leagueID) {
 			leagueToken.LeagueInviteToken = item.LeagueInviteToken
 		} else if item.PartitionKey == getUserID(requestingUserID) &&
 			item.SortKey == getLeagueID(leagueID) {
