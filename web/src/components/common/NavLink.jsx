@@ -16,11 +16,11 @@ export default function NavLink(props) {
 
   return (
     <Grid item>
-      <ListItem 
-        button 
-        disableGutters={isMobile} 
-        component={renderLink} 
-    >
+      <ListItem
+        button
+        disableGutters={isMobile}
+        component={renderLink}
+      >
         {icon}
         <Typography variant="body1">
           {primary}

@@ -1,14 +1,11 @@
 import React, { useEffect } from "react";
-import { Typography, AppBar, Toolbar, Grid, ListItem } from "@material-ui/core";
-import HomeIcon from "@material-ui/icons/Home";
-import FlagIcon from "@material-ui/icons/Flag";
+import { AppBar, Toolbar, Grid } from "@material-ui/core";
 import { createTheme, ThemeProvider } from "@material-ui/core/styles";
 import { BrowserRouter, BrowserRouter as Router, Link, Route, Routes, Switch } from "react-router-dom";
 import { useLocation } from "react-router";
 import useStyles from "utils/styles";
 import Info from "components/pages/info/Info";
 import NavLink from "components/common/NavLink";
-import { Page } from "components/common/Page";
 import Leagues from "components/pages/leagues/Leagues";
 import Race from "components/pages/race/Race";
 import NewLeagueForm from "components/pages/leagues/NewLeagueForm";
@@ -19,6 +16,7 @@ import ErrorBoundary from "components/pages/error/ErrorBoundary";
 import Login from "components/pages/auth/Login";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import { RequireAuth } from "components/pages/auth/RequireAuth";
+import JoinLeague from "components/pages/join-league/JoinLeague";
 
 const theme = createTheme({
   palette: {
@@ -87,7 +85,7 @@ function TopBar() {
   return (
     <AppBar position="static" className={classes.navBar}>
       <Toolbar>
-        <Grid container direction="row" justify="space-between" alignItems="center">
+        <Grid container direction="row" justifyContent="space-between" alignItems="center">
           <Grid item>
             <NavLink to="/profile" icon={isAuthenticated ? <AccountCircle /> : <AccountCircleOutlined />} />
           </Grid>
@@ -137,6 +135,11 @@ function App() {
           <Route path="/leagues/new" element={
             <RequireAuth>
               <NewLeagueForm />
+            </RequireAuth>
+          } />
+          <Route path="/leagues/:id/join" element={
+            <RequireAuth>
+              <JoinLeague />
             </RequireAuth>
           } />
           <Route path="/leagues/:id" element={

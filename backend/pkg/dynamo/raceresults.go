@@ -18,22 +18,20 @@ type RaceResultsRepository interface {
 }
 
 type raceResultsRepository struct {
-	svc       *dynamodb.DynamoDB
-	tableName string
+	svc *dynamodb.DynamoDB
 }
 
 func NewRaceResultsRepository(sess *session.Session) RaceResultsRepository {
 	svc := dynamodb.New(sess)
 
 	return &raceResultsRepository{
-		svc:       svc,
-		tableName: "RaceResults",
+		svc: svc,
 	}
 }
 
 func (r raceResultsRepository) GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error) {
 	result, err := r.svc.QueryWithContext(ctx, &dynamodb.QueryInput{
-		TableName: aws.String(r.tableName),
+		TableName: raceResultsTableName,
 		KeyConditions: map[string]*dynamodb.Condition{
 			"Season": {
 				ComparisonOperator: aws.String("EQ"),
@@ -86,7 +84,7 @@ func (r raceResultsRepository) SaveRaceResults(ctx context.Context, raceResults 
 	}
 
 	_, err = r.svc.PutItemWithContext(ctx, &dynamodb.PutItemInput{
-		TableName: aws.String(r.tableName),
+		TableName: raceResultsTableName,
 		Item:      rawResults,
 	})
 	if err != nil {

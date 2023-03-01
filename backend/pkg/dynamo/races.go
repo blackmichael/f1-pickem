@@ -26,14 +26,13 @@ func NewRacesRepository(sess *session.Session) RacesRepository {
 	svc := dynamodb.New(sess)
 
 	return &raceResultsRepository{
-		svc:       svc,
-		tableName: "Races",
+		svc: svc,
 	}
 }
 
 func (r raceResultsRepository) GetRaces(ctx context.Context, season string) (domain.Races, error) {
 	result, err := r.svc.QueryWithContext(ctx, &dynamodb.QueryInput{
-		TableName: aws.String(r.tableName),
+		TableName: racesTableName,
 		KeyConditions: map[string]*dynamodb.Condition{
 			"Season": {
 				ComparisonOperator: aws.String("EQ"),
@@ -87,10 +86,10 @@ func (r raceResultsRepository) SaveRaces(ctx context.Context, races domain.Races
 
 	output, err := r.svc.BatchWriteItemWithContext(ctx, &dynamodb.BatchWriteItemInput{
 		RequestItems: map[string][]*dynamodb.WriteRequest{
-			r.tableName: requests,
+			*racesTableName: requests,
 		},
 	})
-	for _, unprocessedItem := range output.UnprocessedItems[r.tableName] {
+	for _, unprocessedItem := range output.UnprocessedItems[*racesTableName] {
 		log.Printf("INFO: unprocessed item: %v\n", unprocessedItem.GoString())
 	}
 	if err != nil {

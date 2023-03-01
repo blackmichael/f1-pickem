@@ -21,6 +21,10 @@ local:
 	go build -o fetch-race-results.out ./cmd/fetch-race-results/main.go
 	go build -o get-race-scores.out ./cmd/get-race-scores/main.go
 	go build -o get-races.out ./cmd/get-races/main.go
+	go build -o create-league.out ./cmd/create-league/main.go
+	go build -o join-league.out ./cmd/join-league/main.go
+	go build -o get-league-details.out ./cmd/get-league-details/main.go
+	go build -o refresh-league-token.out ./cmd/refresh-league-token/main.go
 
 # compile the code to run in Lambda (local or real)
 .PHONY: lambda
