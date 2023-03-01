@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Page } from "components/common/Page";
 import {
   Box,
+  Button,
   FormControl,
   Grid,
   InputLabel,
@@ -25,7 +26,8 @@ import { getRaces } from "store/actions/racesActions";
 import { getRaceScores } from "store/actions/raceScoresActions";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
-import { useMatch } from "react-router-dom";
+import { Link, useMatch } from "react-router-dom";
+import { getLeaguesResource } from "utils/resources";
 
 export default function Race(props) {
   const dispatch = useDispatch();
@@ -65,14 +67,18 @@ export default function Race(props) {
     setTab(newValue);
   };
 
+  console.log("race!")
+  console.log(leagueInfo);
+
   return (
     <Page>
       <Loadable loading={leagueLoading || racesLoading} error={leagueError || racesError}>
         <Grid item xs={12}>
           <Typography variant="h4">{raceData.race_name}</Typography>
-          <Subtitle>
-            {leagueInfo.name} - {leagueInfo.season} Season
-          </Subtitle>
+          <SubtitleNavLink
+            to={getLeaguesResource(match.params.leagueId)}
+            leagueName={leagueInfo.name}
+            leagueSeason={leagueInfo.season}/>
         </Grid>
         <Grid item xs={12}>
           <AntTabs value={tab} onChange={handleTabChange} aria-label="views">
@@ -96,5 +102,25 @@ export default function Race(props) {
         </Grid>
       </Loadable>
     </Page>
+  );
+}
+
+function SubtitleNavLink(props) {
+  const { to, leagueName, leagueSeason } = props;
+
+  const renderLink = React.useMemo(
+    () =>
+      React.forwardRef((itemProps, ref) => (
+        <Link to={to} ref={ref} {...itemProps} />
+      )),
+    [to]
+  );
+
+  return (
+    <Button component={renderLink}>
+      <Subtitle>
+        {leagueName} - {leagueSeason} Season
+      </Subtitle>
+    </Button>
   );
 }

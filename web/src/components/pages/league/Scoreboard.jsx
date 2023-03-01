@@ -1,11 +1,14 @@
 import {
   Grid,
+  IconButton,
+  InputAdornment,
   Paper,
   Table,
   TableBody,
   TableContainer,
   TableHead,
   TableRow,
+  TextField,
 } from "@material-ui/core";
 import {
   StyledTable,
@@ -13,34 +16,66 @@ import {
   StyledTableRow,
 } from "components/common/StyledTable";
 import React from "react";
+import { getLeagueInviteLink } from "utils/resources";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 export default function Scoreboard(props) {
-  const scores = props.data || [];
+  const members = props.members || [];
+  const { inviteToken, leagueId } = props;
+  const inviteLink = getLeagueInviteLink(leagueId, inviteToken)
+
+  function copyLeagueInviteLink() {
+    navigator.clipboard.writeText(inviteLink);
+  }
+
+  let inviteLinkComponent = <></>;
+  if (inviteToken !== null) {
+    inviteLinkComponent = (
+      <Grid item xs={12} style={{paddingTop: "2em"}}>
+        <TextField
+          label="Invite Friends"
+          variant="outlined"
+          disabled
+          size="medium"
+          margin="normal"
+          fullWidth
+          defaultValue={inviteLink}
+          InputProps={{
+            endAdornment: <InputAdornment position="end">
+              <IconButton edge="end" onClick={copyLeagueInviteLink()}>
+                <ContentCopyIcon></ContentCopyIcon>
+              </IconButton>
+            </InputAdornment>
+          }} />
+      </Grid>
+    );
+  }
 
   return (
-    <Grid item xs={12}>
-      <TableContainer component={Paper}>
-        <StyledTable>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell size="small">Place</StyledTableCell>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell>Score</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {scores
-              .sort((a, b) => a.score < b.score)
-              .map((score, idx) => (
-                <StyledTableRow key={score.name + idx}>
-                  <StyledTableCell>{idx + 1}.</StyledTableCell>
-                  <StyledTableCell>{score.name}</StyledTableCell>
-                  <StyledTableCell>{score.score}</StyledTableCell>
-                </StyledTableRow>
-              ))}
-          </TableBody>
-        </StyledTable>
-      </TableContainer>
+    <Grid container item xs={12}>
+      <Grid item xs={12}>
+        <TableContainer component={Paper}>
+          <StyledTable>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Score</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {members
+                .sort((a, b) => a.score < b.score)
+                .map((member, idx) => (
+                  <StyledTableRow key={member.id}>
+                    <StyledTableCell>{member.name}</StyledTableCell>
+                    <StyledTableCell>{member.score ? member.score : "n/a"}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+            </TableBody>
+          </StyledTable>
+        </TableContainer>
+      </Grid>
+      {inviteLinkComponent}
     </Grid>
   );
 }

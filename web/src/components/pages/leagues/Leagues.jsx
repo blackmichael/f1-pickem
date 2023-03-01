@@ -1,40 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Divider,
   Grid,
+  TextField,
   Typography,
 } from "@material-ui/core";
 import { Page } from "components/common/Page";
 import LinkButton from "components/common/LinkButton";
-import { getLeagues } from "store/actions/leaguesActions";
+import { clearNewLeagueJoined, getLeagues } from "store/actions/leaguesActions";
 import { getLeaguesResource } from "utils/resources";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
 import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useCallback } from "react";
 
 export default function Leagues(props) {
   const dispatch = useDispatch();
   const { user } = useAuthenticator((context) => [context.user]);
   const leaguesState = useSelector((state) => state.leagues);
-  const { loading, error, leaguesList } = leaguesState;
+  const { loading, error, leaguesList, joinLeagueError } = leaguesState;
+
+  const [openJoinLeagueErrorDialog, setOpenJoinLeagueErrorDialog] = useState(false);
+  useEffect(() => {
+    setOpenJoinLeagueErrorDialog(joinLeagueError !== null)
+  }, [joinLeagueError]);
+
+  const handleDialogClose = useCallback(() => {
+    console.log("is this happening?")
+    dispatch(clearNewLeagueJoined());
+    setOpenJoinLeagueErrorDialog(false);
+  }, []);
 
   useEffect(() => {
     if (user?.username) {
       dispatch(getLeagues(user?.username));
     }
-  }, [dispatch]);
+  }, [dispatch, user]);
 
-  let leaguesComponents = leaguesList
-  .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
-  .reverse()
-  .map((league) => (
-    <LeagueSelector data={league} key={league.id} />
-  ));
+  const leaguesComponents = leaguesList
+    .sort((a, b) => ("" + a.season + a.name).localeCompare(b.season + b.name))
+    .reverse()
+    .map((league) => (
+      <LeagueSelector data={league} key={league.id} />
+    ));
 
   const emptyListPlaceholder = (
-    <Grid item xs={12} style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
-        <Typography variant="h6">Nothing to see here!</Typography>
+    <Grid container item xs={12} justifyContent="center" style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
+        <Subtitle>Nothing to see here!</Subtitle>
     </Grid>
   );
 
@@ -61,6 +79,8 @@ export default function Leagues(props) {
           color="primary"
         />
       </Grid>
+
+      <NewLeagueDialog open={openJoinLeagueErrorDialog} onClose={handleDialogClose} />
     </Page>
   );
 }
@@ -81,3 +101,27 @@ function LeagueSelector(props) {
     </Grid>
   )
 }
+
+function newLeagueDialog({ open, onClose }) {
+  return (
+    <Dialog open={open} onClose={onClose}>
+      <DialogTitle>
+        Error
+      </DialogTitle>
+      <DialogContent>
+        <Grid container item xs={12} direction="column">
+          <Grid item xs={12}>
+            <Typography>
+              Failed to join league.
+            </Typography>
+          </Grid>
+        </Grid>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onClose}>Close</Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
+
+const NewLeagueDialog = memo(newLeagueDialog);

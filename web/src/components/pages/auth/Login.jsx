@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Page } from 'components/common/Page';
 import { Grid } from '@material-ui/core';
-import { Amplify, Auth as AmplifyAuth, Hub } from 'aws-amplify';
 import {
   Authenticator,
   ThemeProvider,
   useAuthenticator,
   useTheme,
 } from '@aws-amplify/ui-react';
-
-import awsconfig from '../../../aws-exports';
 import '@aws-amplify/ui-react/styles.css';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router';
@@ -18,9 +15,11 @@ export default function Login() {
   const { route } = useAuthenticator((context) => [context.route]);
   const location = useLocation();
   const navigate = useNavigate();
-  let from = location.state?.from?.pathname || "/";
+  let from = (location.state?.from?.pathname || "/") + location.state?.from?.search;
   useEffect(() => {
     if (route === "authenticated") {
+      // navigate(-1);
+      console.log("navigating back to ", from);
       navigate(from, { replace: true });
     }
   }, [route, navigate, from]);

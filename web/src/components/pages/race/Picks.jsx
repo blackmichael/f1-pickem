@@ -45,7 +45,7 @@ export default function Picks(props) {
   const [drivers, setDrivers] = useState(getDrivers());
 
   const { user } = useAuthenticator((context) => [context.user]);
-  const userId = user?.attributes?.sub;
+  const userId = user?.username;
   if (!userId) {
     // I might regret this
     throw Error("userId missing from user attributes")

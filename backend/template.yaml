@@ -67,6 +67,57 @@ Resources:
             Path: '/races/{season}'
             Method: GET
 
+  CreateLeagueLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: create-league.out
+      Timeout: 30
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/leagues'
+            Method: POST
+  
+  GetLeagueDetailsLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: get-league-details.out
+      Timeout: 30
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/leagues/{league_id}'
+            Method: GET
+  
+  JoinLeagueLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: join-league.out
+      Timeout: 30
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/leagues/join'
+            Method: POST
+  
+  RefreshLeagueTokenLambda:
+    Type: AWS::Serverless::Function
+    Properties:
+      Runtime: go1.x
+      Handler: refresh-league-token.out
+      Timeout: 30
+      Events:
+        Handler:
+          Type: Api
+          Properties:
+            Path: '/leagues/{league_id}/token'
+            Method: GET
 
 Outputs:
   Endpoint:

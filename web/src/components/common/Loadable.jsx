@@ -7,13 +7,13 @@ export function Loadable(props) {
 
   if (loading) {
     return (
-      <Grid container item xs={12} justify="center">
+      <Grid container item xs={12} justifyContent="center">
         <CircularProgress />
       </Grid>
     )
   } else if (error) {
     return (
-      <Grid container item xs={12} justify="center" style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
+      <Grid container item xs={12} justifyContent="center" style={{paddingBottom: "2em", paddingTop: "1.5em"}}>
           <Subtitle>Unable to load data. Please refresh the page.</Subtitle>
       </Grid>
     )
