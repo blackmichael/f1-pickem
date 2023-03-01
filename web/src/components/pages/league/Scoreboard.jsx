@@ -29,7 +29,7 @@ export default function Scoreboard(props) {
   }
 
   let inviteLinkComponent = <></>;
-  if (inviteToken !== null) {
+  if (inviteToken) {
     inviteLinkComponent = (
       <Grid item xs={12} style={{paddingTop: "2em"}}>
         <TextField
@@ -66,7 +66,7 @@ export default function Scoreboard(props) {
               {members
                 .sort((a, b) => a.score < b.score)
                 .map((member, idx) => (
-                  <StyledTableRow key={member.id}>
+                  <StyledTableRow key={`${idx}_${member.id}`}>
                     <StyledTableCell>{member.name}</StyledTableCell>
                     <StyledTableCell>{member.score ? member.score : "n/a"}</StyledTableCell>
                   </StyledTableRow>
