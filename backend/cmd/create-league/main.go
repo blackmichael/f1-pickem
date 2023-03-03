@@ -71,7 +71,7 @@ func (h *createLeagueHandler) Handle(ctx context.Context, request events.APIGate
 	}
 
 	response, err := json.Marshal(Response{
-		LeagueID: league.LeagueID,
+		LeagueID:    league.LeagueID,
 		InviteToken: token,
 	})
 	if err != nil {

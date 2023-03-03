@@ -46,10 +46,6 @@ export default function Picks(props) {
 
   const { user } = useAuthenticator((context) => [context.user]);
   const userId = user?.username;
-  if (!userId) {
-    // I might regret this
-    throw Error("userId missing from user attributes")
-  }
 
   const onDragEnd = (result) => {
     if (!result.destination) {
@@ -70,6 +66,7 @@ export default function Picks(props) {
       league_id: props.leagueId,
       race_id: props.raceId,
       user_id: userId,
+      user_name: user?.attributes?.name,
       picks: drivers.slice(0, 10),
     };
     dispatch(submitPicks(request));

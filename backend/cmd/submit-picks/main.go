@@ -2,13 +2,11 @@ package main
 
 import (
 	"blackmichael/f1-pickem/pkg/domain"
-	"blackmichael/f1-pickem/pkg/users"
 	"blackmichael/f1-pickem/pkg/util"
 	"context"
 	"encoding/json"
 	"fmt"
 	"log"
-	"strings"
 	"time"
 
 	"github.com/aws/aws-lambda-go/events"
@@ -21,10 +19,16 @@ import (
 )
 
 type Request struct {
-	LeagueId string   `json:"league_id"`
-	RaceId   string   `json:"race_id"`
-	UserId   string   `json:"user_id"`
+	LeagueID string   `json:"league_id"`
+	RaceID   string   `json:"race_id"`
+	UserID   string   `json:"user_id"`
 	Picks    []string `json:"picks"`
+
+	// It's probably cleaner to not require the frontend to pass in the user's name
+	// every time they join a league but to do that with the adjacency lists pattern
+	// would require some sort of DDB Streams background job to update user items.
+	// This is much simpler for now. Cognito is annoying.
+	UserName string `json:"user_name"`
 }
 
 type Response struct {
@@ -32,34 +36,25 @@ type Response struct {
 }
 
 func (h submitPicksHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
-	log.Printf("incoming request: %s\n", request.Body)
-
 	var req Request
 	err := json.Unmarshal([]byte(request.Body), &req)
 	if err != nil {
 		return util.MessageResponse(400, "bad request"), nil
 	}
 
-	// hack: user auth/service isn't a thing yet, so have the frontend pass an email for the userid
-	// and then verify that it's a known user account / map it to an id
-	userId, err := users.GetUserId(strings.ToLower(req.UserId))
-	if err != nil {
-		return util.MessageResponse(404, "user not found"), nil
-	}
-	req.UserId = userId
-
 	if len(req.Picks) != 10 {
 		return util.MessageResponse(422, "must provide exactly 10 picks"), nil
 	}
 
 	picks := domain.RacePicks{
-		LeagueIdRaceId: fmt.Sprintf("%s-%s", req.LeagueId, req.RaceId),
-		UserId:         req.UserId,
+		LeagueIdRaceId: fmt.Sprintf("%s-%s", req.LeagueID, req.RaceID),
+		UserID:         req.UserID,
+		UserName:       req.UserName,
 		Picks:          req.Picks,
 		SubmittedAt:    time.Now().UTC(),
 	}
 
-	err = h.racePicksRepository.SavePicks(ctx, req.LeagueId, req.RaceId, req.UserId, picks)
+	err = h.racePicksRepository.SavePicks(ctx, picks)
 	if err != nil {
 		return util.MessageResponse(500, "failed to save picks to db"), err
 	}

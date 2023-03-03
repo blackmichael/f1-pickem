@@ -15,60 +15,61 @@ import {
   Typography,
   withStyles,
 } from "@material-ui/core";
-import { getLeague, getRaceById } from "store/defaultStore";
 import Results from "components/pages/race/Results";
 import Picks from "components/pages/race/Picks";
 import { AntTab, AntTabs, TabPanel } from "components/common/Tabs";
-import { getRace, getPicks, getLeagueSummary } from "store/defaultStore";
 import { useDispatch, useSelector } from "react-redux";
-import { getLeagues } from "store/actions/leaguesActions";
+import { getLeagueDetails, getLeagues } from "store/actions/leaguesActions";
 import { getRaces } from "store/actions/racesActions";
 import { getRaceScores } from "store/actions/raceScoresActions";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
 import { Link, useMatch } from "react-router-dom";
 import { getLeaguesResource } from "utils/resources";
+import { useAuthenticator } from "@aws-amplify/ui-react";
 
 export default function Race(props) {
   const dispatch = useDispatch();
   const match = useMatch("/leagues/:leagueId/races/:raceId");
+  const leagueId = match.params.leagueId;
+  const raceId = match.params.raceId;
+
+  const { user } = useAuthenticator((context) => [context.user]);
+  const userId = user?.username;
 
   const leaguesState = useSelector((state) => state.leagues);
   const { leagueLoading, leagueError, leaguesMap } = leaguesState;
-  const leagueInfo = leaguesMap.get(match.params.leagueId, {});
+  const leagueDetails = leaguesMap.get(leagueId, {});
 
   useEffect(() => {
-    // only fetch leagues info if it's not available
-    if (leaguesMap.size == 0) {
-      dispatch(getLeagues());
+    // only fetch league details if it's not available
+    if (Object.keys(leagueDetails).length === 0) {
+      dispatch(getLeagueDetails(leagueId, userId));
     }
-  }, [dispatch]);
+  }, [dispatch, leagueId, userId]);
 
   const racesState = useSelector((state) => state.races);
   const { racesLoading, racesError, raceById } = racesState;
-  const raceData = raceById[match.params.raceId] || {};
+  const raceData = raceById[raceId] || {};
 
   useEffect(() => {
-    if (leagueInfo.season !== undefined) {
-      dispatch(getRaces(leagueInfo.season))
+    if (!raceById[raceId] && leagueDetails.season !== undefined) {
+      dispatch(getRaces(leagueDetails.season));
     }
-  }, [dispatch, leagueInfo.season]);
+  }, [dispatch, leagueDetails.season]);
 
   const raceScoresState = useSelector((state) => state.raceScores);
   const { raceScoresLoading, raceScoresError, raceScoresMap } = raceScoresState;
-  const raceScores = raceScoresMap.get(props.raceId, { user_scores: [] });
+  const raceScores = raceScoresMap.get(raceId, { user_scores: [] });
 
   useEffect(() => {
-    dispatch(getRaceScores(match.params.leagueId, match.params.raceId));
-  }, [dispatch]);
+    dispatch(getRaceScores(leagueId, raceId));
+  }, [dispatch, leagueId, raceId]);
 
   const [tab, setTab] = useState(0);
   const handleTabChange = (event, newValue) => {
     setTab(newValue);
   };
-
-  console.log("race!")
-  console.log(leagueInfo);
 
   return (
     <Page>
@@ -76,9 +77,9 @@ export default function Race(props) {
         <Grid item xs={12}>
           <Typography variant="h4">{raceData.race_name}</Typography>
           <SubtitleNavLink
-            to={getLeaguesResource(match.params.leagueId)}
-            leagueName={leagueInfo.name}
-            leagueSeason={leagueInfo.season}/>
+            to={getLeaguesResource(leagueId)}
+            leagueName={leagueDetails.name}
+            leagueSeason={leagueDetails.season}/>
         </Grid>
         <Grid item xs={12}>
           <AntTabs value={tab} onChange={handleTabChange} aria-label="views">
@@ -87,15 +88,15 @@ export default function Race(props) {
           </AntTabs>
           <TabPanel value={tab} index={0}>
             <Picks
-              leagueId={match.params.leagueId}
-              raceId={match.params.raceId}
+              leagueId={leagueId}
+              raceId={raceId}
             />
           </TabPanel>
           <TabPanel value={tab} index={1}>
             <Loadable loading={raceScoresLoading} error={raceScoresError}>
               <Results
-                leagueId={match.params.leagueId}
-                raceId={match.params.raceId}
+                leagueId={leagueId}
+                raceId={raceId}
               />
             </Loadable>
           </TabPanel>

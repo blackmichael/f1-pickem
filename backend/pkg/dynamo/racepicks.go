@@ -14,7 +14,7 @@ import (
 
 type RacePicksRepository interface {
 	GetAllPicks(ctx context.Context, leagueId, raceId string) ([]*domain.RacePicks, error)
-	SavePicks(ctx context.Context, leagueId, raceId, userId string, picks domain.RacePicks) error
+	SavePicks(ctx context.Context, picks domain.RacePicks) error
 }
 
 type racePicksRepository struct {
@@ -44,25 +44,20 @@ func (r racePicksRepository) GetAllPicks(ctx context.Context, leagueId, raceId s
 		},
 	})
 	if err != nil {
-		log.Printf("")
+		log.Printf("ERROR failed to query picks (%s)\n", err)
 		return nil, err
 	}
 
-	allPicks := make([]*domain.RacePicks, len(result.Items), len(result.Items))
-	for i, item := range result.Items {
-		var picks domain.RacePicks
-		if err := dynamodbattribute.UnmarshalMap(item, &picks); err != nil {
-			log.Printf("")
-			return nil, err
-		}
-
-		allPicks[i] = &picks
+	var allPicks []*domain.RacePicks
+	if err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &allPicks); err != nil {
+		log.Printf("ERROR failed to unmarshal picks (%s)\n", err)
+		return nil, err
 	}
 
 	return allPicks, nil
 }
 
-func (r racePicksRepository) SavePicks(ctx context.Context, leagueId, raceId, userId string, picks domain.RacePicks) error {
+func (r racePicksRepository) SavePicks(ctx context.Context, picks domain.RacePicks) error {
 	rawPicks, err := dynamodbattribute.MarshalMap(picks)
 	if err != nil {
 		log.Printf("ERROR: failed to marshal picks (%s)\n", err.Error())
