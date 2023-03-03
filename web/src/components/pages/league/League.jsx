@@ -67,7 +67,7 @@ export default function League(props) {
     if (!racesBySeason[leagueDetails.season] && leagueDetails.season !== undefined) {
       dispatch(getRaces(leagueDetails.season));
     }
-  }, [dispatch, leagueDetails.season]);
+  }, [dispatch, leagueDetails.season, racesBySeason]);
 
   const [tab, setTab] = useState(0);
   const handleTabChange = (event, newValue) => {

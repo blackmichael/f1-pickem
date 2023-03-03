@@ -17,7 +17,8 @@ export default function (state = initialState, action) {
     case GET_RACE_SCORES_SUCCESS:
       return {
         ...state,
-        // instead of replacing the attribute, just replace the race score entry
+        // instead of replacing the attribute, just replace the race score entry.
+        // todo - persist race scores per league (right now this will cause reloads for each league)
         raceScoresMap: state.raceScoresMap.set(action.raceId, action.payload),
         loading: false,
       };

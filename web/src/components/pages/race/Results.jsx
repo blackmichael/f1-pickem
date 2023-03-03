@@ -1,29 +1,13 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Page, Subtitle } from "components/common/Page";
+import React, { useEffect } from "react";
 import {
-  Box,
   FormControl,
   Grid,
-  InputLabel,
-  makeStyles,
-  MenuItem,
   Paper,
-  Select,
-  Tab,
   TableBody,
   TableContainer,
   TableHead,
   TableRow,
-  Tabs,
-  TextField,
-  Typography,
-  withStyles,
 } from "@material-ui/core";
-import { getLeague, getUserById } from "store/defaultStore";
-import Scoreboard from "components/pages/league/Scoreboard";
-import Races from "components/pages/league/Races";
-import { AntTab, AntTabs, TabPanel } from "components/common/Tabs";
-import { getRace, getPicks, getLeagueSummary } from "store/defaultStore";
 import {
   StyledTable,
   StyledTableCell,
@@ -31,6 +15,7 @@ import {
 } from "components/common/StyledTable";
 import { getRaceScores } from "store/actions/raceScoresActions";
 import { useDispatch, useSelector } from "react-redux";
+import { Loadable } from "components/common/Loadable";
 
 export default function Results(props) {
   const dispatch = useDispatch();
@@ -39,46 +24,45 @@ export default function Results(props) {
   const raceScores = raceScoresMap.get(props.raceId, { user_scores: [] });
 
   useEffect(() => {
+    // todo - only fetch if data doesn't exist, but only after we track race scores per league
     dispatch(getRaceScores(props.leagueId, props.raceId));
   }, [dispatch]);
 
   return (
     <Grid item xs={12}>
-      <TableContainer component={Paper}>
-        <StyledTable>
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Place</StyledTableCell>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell>Points</StyledTableCell>
-              <StyledTableCell>Drivers Picked Right</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {(raceScores.user_scores || [])
-              .sort((a, b) => a.total_score < b.total_score)
-              .map((score, place) => {
-                let user = getUserById(score.user_id);
-                let displayName = "";
-                let NumCorArray = score.breakdown.filter(breakdown => breakdown.points == 25);
-                let NumCor = NumCorArray.length;
-                if (user === undefined) {
-                  displayName = "n/a";
-                } else {
-                  displayName = user.display_name;
-                }
-                return (
-                  <StyledTableRow key={score.user_id}>
-                    <StyledTableCell>{place + 1}</StyledTableCell>
-                    <StyledTableCell>{displayName}</StyledTableCell>
-                    <StyledTableCell>{score.total_score}</StyledTableCell>
-                    <StyledTableCell>{NumCor}</StyledTableCell>
-                  </StyledTableRow>
-                );
-              })}
-          </TableBody>
-        </StyledTable>
-      </TableContainer>
+      <Loadable loading={loading} error={error}>
+        <TableContainer component={Paper}>
+          <StyledTable>
+            <TableHead>
+              <TableRow>
+                <StyledTableCell>#</StyledTableCell>
+                <StyledTableCell>Name</StyledTableCell>
+                <StyledTableCell>Points</StyledTableCell>
+                <StyledTableCell>Correct Picks</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(raceScores.user_scores || [])
+                .sort((a, b) => a.total_score < b.total_score)
+                .map((score, place) => {
+                  let correctPicks = score.breakdown.filter(breakdown => breakdown.points == 25);
+                  let displayName = score.user_name;
+                  if (displayName === undefined) {
+                    displayName = "n/a";
+                  }
+                  return (
+                    <StyledTableRow key={score.user_id}>
+                      <StyledTableCell>{place + 1}.</StyledTableCell>
+                      <StyledTableCell>{displayName}</StyledTableCell>
+                      <StyledTableCell>{score.total_score}</StyledTableCell>
+                      <StyledTableCell>{correctPicks.length}</StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+            </TableBody>
+          </StyledTable>
+        </TableContainer>
+      </Loadable>
     </Grid>
   );
 }

@@ -18,6 +18,7 @@ type driverPoints struct {
 
 type RaceScore struct {
 	UserId     string          `json:"user_id"`
+	UserName   string          `json:"user_name"`
 	TotalScore int             `json:"total_score"`
 	Breakdown  []*driverPoints `json:"breakdown"`
 }
@@ -66,7 +67,8 @@ func (rc *RaceScorer) GetScore(picks *RacePicks) *RaceScore {
 	}
 
 	return &RaceScore{
-		UserId:     picks.UserId,
+		UserId:     picks.UserID,
+		UserName:   picks.UserName,
 		TotalScore: score,
 		Breakdown:  scores,
 	}
