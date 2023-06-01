@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -47,6 +48,22 @@ func (h getRacesHandler) Handle(ctx context.Context, request events.APIGatewayPr
 				StatusCode: 204,
 				Headers:    util.CorsHeaders,
 			}, nil
+		}
+
+		// ergast api sucks butt and modified the schedule and race IDs so here's a hack to unbreak everything
+		if season == "2023" {
+			for _, race := range races {
+				raceNumber, err := strconv.Atoi(race.RaceNumber)
+				if err != nil {
+					log.Printf("FAILURE: ergast api returned unexpect race data (%+v)\n", *race)
+					continue
+				}
+
+				if raceNumber >= 6 {
+					race.RaceNumber = strconv.FormatInt(int64(raceNumber+1), 10)
+					race.RaceId = domain.GetRaceId(season, race.RaceNumber)
+				}
+			}
 		}
 
 		// if api has results, write them to db

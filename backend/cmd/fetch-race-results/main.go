@@ -7,6 +7,7 @@ import (
 	"context"
 	"encoding/json"
 	"log"
+	"strconv"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -26,6 +27,18 @@ func (h fetchRaceResultsHandler) Handle(ctx context.Context, request events.APIG
 	raceNumber, ok := request.PathParameters["race_number"]
 	if !ok {
 		return util.MessageResponse(400, "missing path parameter: race_number"), nil
+	}
+
+	// ergast api italian gp hack
+	if season == "2023" {
+		numericRaceNumber, err := strconv.Atoi(raceNumber)
+		if err != nil {
+			return util.MessageResponse(400, "invalid non-numeric race_number"), nil
+		}
+
+		if numericRaceNumber > 6 {
+			raceNumber = strconv.FormatInt(int64(numericRaceNumber-1), 10)
+		}
 	}
 
 	// read race data from db
