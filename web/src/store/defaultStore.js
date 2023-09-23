@@ -20,6 +20,7 @@ const driversList = List([
   'Alexander Albon',
   'Logan Sargeant',
   'Yuki Tsunoda',
+  'Liam Lawson',
   'Nyck De Vries',
   'Daniel Ricciardo',
   'Mick Schumacher',
