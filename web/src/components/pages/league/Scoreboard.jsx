@@ -55,11 +55,14 @@ export default function Scoreboard(props) {
     <Grid container item xs={12}>
       <Grid item xs={12}>
         <TableContainer component={Paper}>
-          <StyledTable>
+          <StyledTable stickyHeader>
             <TableHead>
               <TableRow>
                 <StyledTableCell>Name</StyledTableCell>
-                <StyledTableCell>Score</StyledTableCell>
+                <StyledTableCell sortDirection='desc'>Total Score</StyledTableCell>
+                <StyledTableCell>Average Score</StyledTableCell>
+                <StyledTableCell>Best Race</StyledTableCell>
+                <StyledTableCell>Worst Race</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -68,7 +71,10 @@ export default function Scoreboard(props) {
                 .map((member, idx) => (
                   <StyledTableRow key={`${idx}_${member.id}`}>
                     <StyledTableCell>{member.name}</StyledTableCell>
-                    <StyledTableCell>{member.score ? member.score : "n/a"}</StyledTableCell>
+                    <StyledTableCell>{member.total_score ? member.total_score : "n/a"}</StyledTableCell>
+                    <StyledTableCell>{member.average_score ? member.average_score : "n/a"}</StyledTableCell>
+                    <StyledTableCell>{member.best_score ? member.best_score : "n/a"}</StyledTableCell>
+                    <StyledTableCell>{member.worst_score ? member.worst_score : "n/a"}</StyledTableCell>
                   </StyledTableRow>
                 ))}
             </TableBody>

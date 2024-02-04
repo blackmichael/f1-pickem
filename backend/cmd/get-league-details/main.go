@@ -16,17 +16,21 @@ import (
 )
 
 type Response struct {
-	LeagueID          string            `json:"id"`
-	LeagueName        string            `json:"name"`
-	LeagueSeason      string            `json:"season"`
-	LeagueInviteToken string            `json:"invite_token,omitempty"`
-	LeagueMembers     []MembersResponse `json:"members"`
+	LeagueID          string             `json:"id"`
+	LeagueName        string             `json:"name"`
+	LeagueSeason      string             `json:"season"`
+	LeagueInviteToken string             `json:"invite_token,omitempty"`
+	LeagueMembers     []*MembersResponse `json:"members"`
 }
 
 type MembersResponse struct {
-	UserID     string `json:"id"`
-	UserName   string `json:"name"`
-	UserStatus string `json:"status"`
+	UserID       string  `json:"id"`
+	UserName     string  `json:"name"`
+	UserStatus   string  `json:"status"`
+	TotalScore   int     `json:"total_score"`
+	AverageScore float32 `json:"average_score"`
+	BestScore    int     `json:"best_score"`
+	WorstScore   int     `json:"worst_score"`
 }
 
 func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -49,7 +53,7 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 		LeagueID:      leagueID,
 		LeagueName:    league.Name,
 		LeagueSeason:  league.Season,
-		LeagueMembers: make([]MembersResponse, len(league.Users)),
+		LeagueMembers: make([]*MembersResponse, len(league.Users)),
 	}
 	foundUser := false
 	log.Printf("INFO: league details %#v\n", *league)
@@ -65,8 +69,8 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 			}
 		}
 
-		resp.LeagueMembers[i] = MembersResponse{
-			UserID:     userID,
+		resp.LeagueMembers[i] = &MembersResponse{
+			UserID:     user.ID,
 			UserName:   user.Name,
 			UserStatus: string(user.Status),
 		}
@@ -75,6 +79,26 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 	// if user isn't in league then reject request
 	if !foundUser {
 		return util.MessageResponse(403, "unauthorized to fetch league details"), nil
+	}
+
+	// fetch season picks/results
+	leaguePicks, err := h.racePicksRepository.GetLeaguePicks(ctx, leagueID)
+	if err != nil {
+		return util.MessageResponse(500, "failed to fetch league-wide picks"), err
+	}
+	seasonResults, err := h.raceResultsRepository.GetSeasonResults(ctx, league.Season)
+	if err != nil {
+		return util.MessageResponse(500, "failed to fetch season results"), err
+	}
+
+	// calculate season scoreboard
+	scores := domain.CalculateSeasonScores(leaguePicks, seasonResults)
+	for _, member := range resp.LeagueMembers {
+		userScore := scores[member.UserID]
+		member.AverageScore = userScore.AverageScore
+		member.TotalScore = userScore.TotalScore
+		member.BestScore = userScore.BestScore
+		member.WorstScore = userScore.WorstScore
 	}
 
 	response, err := json.Marshal(resp)
@@ -90,7 +114,9 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 }
 
 type getLeagueDetailsHandler struct {
-	leaguesRepository dynamo.LeaguesRepository
+	leaguesRepository     dynamo.LeaguesRepository
+	racePicksRepository   dynamo.RacePicksRepository
+	raceResultsRepository dynamo.RaceResultsRepository
 }
 
 func newGetLeagueDetailsHandler() *getLeagueDetailsHandler {
@@ -106,7 +132,9 @@ func newGetLeagueDetailsHandler() *getLeagueDetailsHandler {
 	})
 
 	return &getLeagueDetailsHandler{
-		leaguesRepository: dynamo.NewLeaguesRepository(sess),
+		leaguesRepository:     dynamo.NewLeaguesRepository(sess),
+		racePicksRepository:   dynamo.NewRacePicksRepository(sess),
+		raceResultsRepository: dynamo.NewRaceResultsRepository(sess),
 	}
 }
 
