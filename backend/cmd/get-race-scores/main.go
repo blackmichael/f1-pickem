@@ -49,7 +49,7 @@ func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGate
 		}, nil
 	}
 
-	allPicks, err := h.racePicksRepository.GetAllPicks(ctx, leagueId, raceId)
+	allPicks, err := h.racePicksRepository.GetRacePicks(ctx, leagueId, raceId)
 	if err != nil {
 		return util.MessageResponse(500, "failed to get user picks"), err
 	}

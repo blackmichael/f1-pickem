@@ -13,7 +13,8 @@ import (
 )
 
 type RacePicksRepository interface {
-	GetAllPicks(ctx context.Context, leagueId, raceId string) ([]*domain.RacePicks, error)
+	GetRacePicks(ctx context.Context, leagueId, raceId string) ([]*domain.RacePicks, error)
+	GetLeaguePicks(ctx context.Context, leagueId string) ([]*domain.RacePicks, error)
 	SavePicks(ctx context.Context, picks domain.RacePicks) error
 }
 
@@ -29,7 +30,26 @@ func NewRacePicksRepository(sess *session.Session) RacePicksRepository {
 	}
 }
 
-func (r racePicksRepository) GetAllPicks(ctx context.Context, leagueId, raceId string) ([]*domain.RacePicks, error) {
+func (r racePicksRepository) GetLeaguePicks(ctx context.Context, leagueId string) ([]*domain.RacePicks, error) {
+	result, err := r.svc.ExecuteStatementWithContext(ctx, &dynamodb.ExecuteStatementInput{
+		Statement: aws.String(fmt.Sprintf(`SELECT * FROM "RacePicks" WHERE begins_with("LeagueID-RaceID", '%s')`, leagueId)),
+	})
+
+	if err != nil {
+		log.Printf("ERROR failed to query league picks (%s)\n", err)
+		return nil, err
+	}
+
+	var allPicks []*domain.RacePicks
+	if err = dynamodbattribute.UnmarshalListOfMaps(result.Items, &allPicks); err != nil {
+		log.Printf("ERROR failed to unmarshal picks (%s)\n", err)
+		return nil, err
+	}
+
+	return allPicks, nil
+}
+
+func (r racePicksRepository) GetRacePicks(ctx context.Context, leagueId, raceId string) ([]*domain.RacePicks, error) {
 	result, err := r.svc.QueryWithContext(ctx, &dynamodb.QueryInput{
 		TableName: racePicksTableName,
 		KeyConditions: map[string]*dynamodb.Condition{

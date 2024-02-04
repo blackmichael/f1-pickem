@@ -14,6 +14,7 @@ import (
 
 type RaceResultsRepository interface {
 	GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error)
+	GetSeasonResults(ctx context.Context, season string) ([]*domain.RaceResults, error)
 	SaveRaceResults(ctx context.Context, race *domain.RaceResults) error
 }
 
@@ -27,6 +28,35 @@ func NewRaceResultsRepository(sess *session.Session) RaceResultsRepository {
 	return &raceResultsRepository{
 		svc: svc,
 	}
+}
+
+func (r raceResultsRepository) GetSeasonResults(ctx context.Context, season string) ([]*domain.RaceResults, error) {
+	result, err := r.svc.QueryWithContext(ctx, &dynamodb.QueryInput{
+		TableName: raceResultsTableName,
+		KeyConditions: map[string]*dynamodb.Condition{
+			"Season": {
+				ComparisonOperator: aws.String("EQ"),
+				AttributeValueList: []*dynamodb.AttributeValue{
+					{
+						S: aws.String(season),
+					},
+				},
+			},
+		},
+	})
+
+	if err != nil {
+		log.Printf("ERROR: failed to retrieve season-wide race results (%s)\n", err)
+		return nil, err
+	}
+
+	var raceResults []*domain.RaceResults
+	if err := dynamodbattribute.UnmarshalListOfMaps(result.Items, &raceResults); err != nil {
+		log.Printf("ERROR: failed to unmarshal season-wide race results (%s)\n", err)
+		return nil, err
+	}
+
+	return raceResults, nil
 }
 
 func (r raceResultsRepository) GetRaceResults(ctx context.Context, season, raceNumber string) (*domain.RaceResults, error) {
