@@ -63,6 +63,7 @@ export default function Scoreboard(props) {
                 <StyledTableCell>Average Score</StyledTableCell>
                 <StyledTableCell>Best Race</StyledTableCell>
                 <StyledTableCell>Worst Race</StyledTableCell>
+                <StyledTableCell>Races Submitted</StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -70,11 +71,12 @@ export default function Scoreboard(props) {
                 .sort((a, b) => a.total_score < b.total_score)
                 .map((member, idx) => (
                   <StyledTableRow key={`${idx}_${member.id}`}>
-                    <StyledTableCell>{member.name}</StyledTableCell>
+                    <StyledTableCell>{idx+1}. {member.name}</StyledTableCell>
                     <StyledTableCell>{member.total_score}</StyledTableCell>
                     <StyledTableCell>{member.average_score}</StyledTableCell>
                     <StyledTableCell>{member.best_score}</StyledTableCell>
                     <StyledTableCell>{member.worst_score}</StyledTableCell>
+                    <StyledTableCell>{member.races_submitted}</StyledTableCell>
                   </StyledTableRow>
                 ))}
             </TableBody>
