@@ -94,7 +94,15 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 	// calculate season scoreboard
 	scores := domain.CalculateSeasonScores(leaguePicks, seasonResults)
 	for _, member := range resp.LeagueMembers {
-		userScore := scores[member.UserID]
+		userScore, ok := scores[member.UserID]
+		if !ok {
+			userScore = &domain.SeasonScore{
+				TotalScore:   0,
+				AverageScore: 0,
+				BestScore:    0,
+				WorstScore:   0,
+			}
+		}
 		member.AverageScore = userScore.AverageScore
 		member.TotalScore = userScore.TotalScore
 		member.BestScore = userScore.BestScore

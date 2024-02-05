@@ -163,6 +163,8 @@ func CalculateSeasonScores(seasonPicks []*RacePicks, seasonResults []*RaceResult
 
 		// calculate average
 		userScore.AverageScore = float32(userScore.TotalScore) / float32(len(userScore.allScores))
+		// round the average to 1/10th
+		userScore.AverageScore = float32(int(userScore.AverageScore * 10)) / 10.0
 	}
 
 	return scores
