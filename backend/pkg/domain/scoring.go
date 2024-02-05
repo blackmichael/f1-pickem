@@ -29,6 +29,7 @@ type SeasonScore struct {
 	AverageScore float32 `json:"average_score"`
 	BestScore    int     `json:"best_score"`
 	WorstScore   int     `json:"worst_score"`
+	RacesSubmitted int `json:"races_submitted"`
 	allScores    []int
 }
 
@@ -165,6 +166,8 @@ func CalculateSeasonScores(seasonPicks []*RacePicks, seasonResults []*RaceResult
 		userScore.AverageScore = float32(userScore.TotalScore) / float32(len(userScore.allScores))
 		// round the average to 1/10th
 		userScore.AverageScore = float32(int(userScore.AverageScore * 10)) / 10.0
+		// races submitted
+		userScore.RacesSubmitted = len(userScore.allScores)
 	}
 
 	return scores

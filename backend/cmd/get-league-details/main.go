@@ -31,6 +31,7 @@ type MembersResponse struct {
 	AverageScore float32 `json:"average_score"`
 	BestScore    int     `json:"best_score"`
 	WorstScore   int     `json:"worst_score"`
+	RacesSubmitted int `json:"races_submitted"`
 }
 
 func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -101,12 +102,14 @@ func (h *getLeagueDetailsHandler) Handle(ctx context.Context, request events.API
 				AverageScore: 0,
 				BestScore:    0,
 				WorstScore:   0,
+				RacesSubmitted: 0,
 			}
 		}
 		member.AverageScore = userScore.AverageScore
 		member.TotalScore = userScore.TotalScore
 		member.BestScore = userScore.BestScore
 		member.WorstScore = userScore.WorstScore
+		member.RacesSubmitted = userScore.RacesSubmitted
 	}
 
 	response, err := json.Marshal(resp)
