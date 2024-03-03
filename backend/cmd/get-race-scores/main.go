@@ -18,6 +18,7 @@ import (
 
 type Response struct {
 	UserScores []*domain.RaceScore `json:"user_scores"`
+	PendingResults bool `json:"pending_results"`
 }
 
 func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
@@ -41,26 +42,28 @@ func (h getRaceScoresHandler) Handle(ctx context.Context, request events.APIGate
 		return util.MessageResponse(500, "failed to fetch race results"), err
 	}
 
-	// results are not ready yet
-	if raceResults == nil {
-		return events.APIGatewayProxyResponse{
-			StatusCode: 204,
-			Headers:    util.CorsHeaders,
-		}, nil
-	}
-
 	allPicks, err := h.racePicksRepository.GetRacePicks(ctx, leagueId, raceId)
 	if err != nil {
 		return util.MessageResponse(500, "failed to get user picks"), err
 	}
 
-	scorer := domain.NewRaceScorer(raceResults)
+	isPending := raceResults == nil
 	userScores := make([]*domain.RaceScore, 0)
-	for _, userPicks := range allPicks {
-		userScores = append(userScores, scorer.GetScore(userPicks))
+	if !isPending {
+		scorer := domain.NewRaceScorer(raceResults)
+		for _, userPicks := range allPicks {
+			userScores = append(userScores, scorer.GetScore(userPicks))
+		}
+	} else {
+		for _, userPicks := range allPicks {
+			userScores = append(userScores, &domain.RaceScore{
+				UserId: userPicks.UserID,
+				UserName: userPicks.UserName,
+			})
+		}
 	}
 
-	response, err := json.Marshal(Response{UserScores: userScores})
+	response, err := json.Marshal(Response{UserScores: userScores, PendingResults: isPending})
 	if err != nil {
 		return util.MessageResponse(500, "unable to marshal response"), err
 	}

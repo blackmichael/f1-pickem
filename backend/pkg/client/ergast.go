@@ -297,8 +297,7 @@ func (api ergastClient) GetRaces(ctx context.Context, season string) (domain.Rac
 		datetime := fmt.Sprintf("%sT%s", race.Date, race.Time)
 		races[i].StartTime, err = time.Parse(time.RFC3339, datetime)
 		if err != nil {
-			log.Printf("ERROR: failed to parse race start time: %v\n", race)
-			return nil, errors.Wrap(err, "failed to parse race start time")
+			log.Printf("ERROR: failed to parse race start time: %+v\n", race)
 		}
 	}
 
