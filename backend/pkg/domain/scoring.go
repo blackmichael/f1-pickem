@@ -20,6 +20,7 @@ type driverPoints struct {
 type RaceScore struct {
 	UserId     string          `json:"user_id"`
 	UserName   string          `json:"user_name"`
+	ScorePending bool `json:"score_pending"`
 	TotalScore int             `json:"total_score"`
 	Breakdown  []*driverPoints `json:"breakdown"`
 }
@@ -113,6 +114,13 @@ func abs(x int) int {
 func CalculateSeasonScores(seasonPicks []*RacePicks, seasonResults []*RaceResults) map[string]*SeasonScore {
 	scores := map[string]*SeasonScore{}
 	picksByRace := map[string][]*RacePicks{}
+	resultsByRaceID := map[string]*RaceResults{}
+
+	// process results into lookup
+	for _, result := range seasonResults {
+		raceID := GetRaceId(result.Season, result.RaceNumber)
+		resultsByRaceID[raceID] = result
+	}
 
 	// process picks and initialize scores
 	for _, picks := range seasonPicks {
@@ -122,13 +130,17 @@ func CalculateSeasonScores(seasonPicks []*RacePicks, seasonResults []*RaceResult
 			return scores
 		}
 		raceID := components[1]
+		if _, ok := resultsByRaceID[raceID]; !ok {
+			continue
+		}
+
 		picksByRace[raceID] = append(picksByRace[raceID], picks)
 		if _, ok := scores[picks.UserID]; !ok {
 			scores[picks.UserID] = &SeasonScore{
 				TotalScore:   0,
 				AverageScore: 0.0,
 				BestScore:    0,
-				WorstScore:   -1,
+				WorstScore:   0,
 				allScores:    []int{},
 			}
 		}

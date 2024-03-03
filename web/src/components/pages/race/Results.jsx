@@ -7,6 +7,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@material-ui/core";
 import {
   StyledTable,
@@ -16,6 +17,7 @@ import {
 import { getRaceScores } from "store/actions/raceScoresActions";
 import { useDispatch, useSelector } from "react-redux";
 import { Loadable } from "components/common/Loadable";
+import { Subtitle } from "components/common/Subtitle";
 
 export default function Results(props) {
   const dispatch = useDispatch();
@@ -31,11 +33,13 @@ export default function Results(props) {
   return (
     <Grid item xs={12}>
       <Loadable loading={loading} error={error}>
+        { raceScores.pending_results ? (
+          <Subtitle variant="caption">Check back later for race results.</Subtitle>
+        ) : null}
         <TableContainer component={Paper}>
           <StyledTable>
             <TableHead>
               <TableRow>
-                <StyledTableCell>#</StyledTableCell>
                 <StyledTableCell>Name</StyledTableCell>
                 <StyledTableCell>Points</StyledTableCell>
                 <StyledTableCell>Correct Picks</StyledTableCell>
@@ -45,19 +49,30 @@ export default function Results(props) {
               {(raceScores.user_scores || [])
                 .sort((a, b) => a.total_score < b.total_score)
                 .map((score, place) => {
-                  let correctPicks = score.breakdown.filter(breakdown => breakdown.points == 25);
                   let displayName = score.user_name;
                   if (displayName === undefined) {
                     displayName = "n/a";
                   }
-                  return (
-                    <StyledTableRow key={score.user_id}>
-                      <StyledTableCell>{place + 1}.</StyledTableCell>
-                      <StyledTableCell>{displayName}</StyledTableCell>
-                      <StyledTableCell>{score.total_score}</StyledTableCell>
-                      <StyledTableCell>{correctPicks.length}</StyledTableCell>
-                    </StyledTableRow>
-                  );
+
+                  if (raceScores.pending_results) {
+                    return (
+                      <StyledTableRow key={score.user_id}>
+                        <StyledTableCell>{place + 1}. {displayName}</StyledTableCell>
+                        <StyledTableCell> - </StyledTableCell>
+                        <StyledTableCell> - </StyledTableCell>
+                      </StyledTableRow>
+                    )
+                  } else {
+                    let correctPicks = score.breakdown.filter(breakdown => breakdown.points == 25);
+
+                    return (
+                      <StyledTableRow key={score.user_id}>
+                        <StyledTableCell>{place + 1}. {displayName}</StyledTableCell>
+                        <StyledTableCell>{score.total_score}</StyledTableCell>
+                        <StyledTableCell>{correctPicks.length}</StyledTableCell>
+                      </StyledTableRow>
+                    );
+                  }
                 })}
             </TableBody>
           </StyledTable>
