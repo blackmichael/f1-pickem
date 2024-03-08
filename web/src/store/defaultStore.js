@@ -7,6 +7,7 @@ const driversList = List([
   'George Russell',
   'Carlos Sainz',
   'Charles Leclerc',
+  'Oliver Bearman',
   'Lando Norris',
   'Oscar Piastri',
   'Pierre Gasly',
