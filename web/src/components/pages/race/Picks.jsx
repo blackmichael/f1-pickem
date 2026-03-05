@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { submitPicks } from "store/actions/picksActions";
 import { toDateTimeDisplayString } from "utils/time";
 import LoadingButton from '@mui/lab/LoadingButton';
-import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useAuth } from "hooks/useAuth";
 
 const reorder = (list, startIndex, endIndex) => {
   const result = Array.from(list);
@@ -44,7 +44,7 @@ export default function Picks(props) {
 
   const [drivers, setDrivers] = useState(getDrivers());
 
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const userId = user?.username;
 
   const onDragEnd = (result) => {

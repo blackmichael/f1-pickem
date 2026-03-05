@@ -1,11 +1,14 @@
 import {CLEAR_NEW_LEAGUE_CREATED, CLEAR_NEW_LEAGUE_JOINED, CREATE_LEAGUE, CREATE_LEAGUE_ERROR, CREATE_LEAGUE_SUCCESS, GET_LEAGUES, GET_LEAGUES_ERROR, GET_LEAGUES_SUCCESS, GET_LEAGUE_DETAILS, GET_LEAGUE_DETAILS_ERROR, GET_LEAGUE_DETAILS_SUCCESS, JOIN_LEAGUE, JOIN_LEAGUE_ERROR, JOIN_LEAGUE_SUCCESS} from 'store/types';
 import axios from 'axios';
 import config from 'config';
+import { mockApi } from 'mocks/mockApi';
 
 export const getLeagues = (userId) => async (dispatch) => {
   dispatch({type: GET_LEAGUES});
   try {
-    const res = await axios.get(config.backendUrl + '/leagues?user_id=' + userId);
+    const res = config.isDemoMode 
+      ? await mockApi.getLeagues(userId)
+      : await axios.get(config.backendUrl + '/leagues?user_id=' + userId);
     dispatch({
       type: GET_LEAGUES_SUCCESS,
       payload: res.data,
@@ -22,7 +25,9 @@ export const getLeagues = (userId) => async (dispatch) => {
 export const getLeagueDetails = (leagueId, userId) => async (dispatch) => {
   dispatch({type: GET_LEAGUE_DETAILS});
   try {
-    const res = await axios.get(config.backendUrl + '/leagues/' + leagueId + '?user_id=' + userId);
+    const res = config.isDemoMode
+      ? await mockApi.getLeagueDetails(leagueId)
+      : await axios.get(config.backendUrl + '/leagues/' + leagueId + '?user_id=' + userId);
     dispatch({
       type: GET_LEAGUE_DETAILS_SUCCESS,
       payload: res.data,
@@ -45,7 +50,14 @@ export const createLeague = ({leagueName, leagueSeason, userId, userName}) => as
       "league_name": leagueName,
       "season": leagueSeason,
     }
-    const res = await axios.post(config.backendUrl + '/leagues', body)
+    const res = config.isDemoMode
+      ? await mockApi.createLeague({
+          name: leagueName,
+          season: leagueSeason,
+          userId: userId,
+          userName: userName
+        })
+      : await axios.post(config.backendUrl + '/leagues', body);
     dispatch({
       type: CREATE_LEAGUE_SUCCESS,
       payload: res.data,
@@ -77,7 +89,9 @@ export const joinLeague = ({leagueId, userId, inviteToken, userName}) => async (
       "invite_token": inviteToken,
       "user_name": userName,
     }
-    const res = await axios.post(config.backendUrl + '/leagues/join', body)
+    const res = config.isDemoMode
+      ? await mockApi.joinLeague(inviteToken, userId)
+      : await axios.post(config.backendUrl + '/leagues/join', body);
     dispatch({
       type: JOIN_LEAGUE_SUCCESS,
       payload: res.data,

@@ -1,0 +1,11 @@
+services:
+  f1-pickem-demo:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+      args:
+        - REACT_APP_DEMO_MODE=true
+    container_name: f1-pickem-demo
+    ports:
+      - "3000:80"
+    restart: unless-stopped

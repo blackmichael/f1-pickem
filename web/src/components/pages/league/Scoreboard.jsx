@@ -18,6 +18,7 @@ import {
 import React from "react";
 import { getLeagueInviteLink } from "utils/resources";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import config from "config";
 
 export default function Scoreboard(props) {
   const members = props.members || [];
@@ -25,11 +26,37 @@ export default function Scoreboard(props) {
   const inviteLink = getLeagueInviteLink(leagueId, inviteToken)
 
   function copyLeagueInviteLink() {
-    navigator.clipboard.writeText(inviteLink);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      // Modern clipboard API
+      navigator.clipboard.writeText(inviteLink).catch((err) => {
+        console.error('Failed to copy to clipboard:', err);
+        fallbackCopyToClipboard();
+      });
+    } else {
+      // Fallback for older browsers or when clipboard API is not available
+      fallbackCopyToClipboard();
+    }
+  }
+
+  function fallbackCopyToClipboard() {
+    const textArea = document.createElement('textarea');
+    textArea.value = inviteLink;
+    textArea.style.position = 'fixed';
+    textArea.style.left = '-999999px';
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.error('Fallback copy failed:', err);
+    }
+    document.body.removeChild(textArea);
   }
 
   let inviteLinkComponent = <></>;
-  if (inviteToken) {
+  // Show invite link if user is owner (has inviteToken) OR in demo mode
+  if (inviteToken || config.isDemoMode) {
     inviteLinkComponent = (
       <Grid item xs={12} style={{paddingTop: "2em"}}>
         <TextField
@@ -42,7 +69,7 @@ export default function Scoreboard(props) {
           defaultValue={inviteLink}
           InputProps={{
             endAdornment: <InputAdornment position="end">
-              <IconButton edge="end" onClick={copyLeagueInviteLink()}>
+              <IconButton edge="end" onClick={copyLeagueInviteLink}>
                 <ContentCopyIcon></ContentCopyIcon>
               </IconButton>
             </InputAdornment>

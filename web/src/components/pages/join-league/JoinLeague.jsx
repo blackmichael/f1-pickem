@@ -1,17 +1,17 @@
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import { Loadable } from "components/common/Loadable";
 import { Page } from "components/common/Page";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, useLocation, useMatch, useNavigate, useSearchParams } from "react-router-dom";
 import { joinLeague } from "store/actions/leaguesActions";
+import { useAuth } from "hooks/useAuth";
 
 // not sure if this is a correct way to do a redirect page but it works (maybe)
 
 export default function JoinLeague(props) {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const [searchParams, _] = useSearchParams();
   const inviteToken = searchParams.get("token");
   const match = useMatch("/leagues/:id/join");

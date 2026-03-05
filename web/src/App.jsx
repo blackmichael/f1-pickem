@@ -17,6 +17,7 @@ import Login from "components/pages/auth/Login";
 import { Authenticator, useAuthenticator } from "@aws-amplify/ui-react";
 import { RequireAuth } from "components/pages/auth/RequireAuth";
 import JoinLeague from "components/pages/join-league/JoinLeague";
+import DemoModeDialog from "components/common/DemoModeDialog";
 
 const theme = createTheme({
   palette: {
@@ -79,7 +80,13 @@ function Title() {
 
 function TopBar() {
   const classes = useStyles();
-  const { authStatus } = useAuthenticator(context => [context.authStatus]);
+  const config = require('config').default;
+  const { useAuth } = require('hooks/useAuth');
+  
+  // In demo mode, always show as authenticated
+  const { authStatus } = config.isDemoMode 
+    ? { authStatus: 'authenticated' }
+    : useAuthenticator(context => [context.authStatus]);
   const isAuthenticated = (authStatus === "authenticated");
 
   return (
@@ -113,6 +120,7 @@ function App() {
   return (
     <Authenticator.Provider>
       <TopBar />
+      <DemoModeDialog />
       <ErrorBoundary>
         <Routes>
           <Route path="/" element={

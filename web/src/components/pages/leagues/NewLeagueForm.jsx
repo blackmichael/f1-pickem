@@ -6,13 +6,13 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingButton } from "@mui/lab";
 import { createLeague } from "store/actions/leaguesActions";
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import { Loadable } from "components/common/Loadable";
 import { Navigate, redirect, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "hooks/useAuth";
 
 export default function NewLeagueForm(props) {
   const dispatch = useDispatch();
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const { createLeagueLoading, newLeagueId, error } = useSelector((state) => state.leagues);
   const location = useLocation();
   const navigate = useNavigate();

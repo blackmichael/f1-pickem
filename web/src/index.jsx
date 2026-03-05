@@ -7,11 +7,14 @@ import { CssBaseline } from "@material-ui/core";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { getRaces } from "store/actions/racesActions";
-import amplifyConfig from 'utils/amplifyConfig';
-import { Amplify } from "aws-amplify";
+import config from 'config';
 
-// configure auth
-Amplify.configure(amplifyConfig)
+// configure auth only in non-demo mode
+if (!config.isDemoMode) {
+  const amplifyConfig = require('utils/amplifyConfig').default;
+  const { Amplify } = require("aws-amplify");
+  Amplify.configure(amplifyConfig);
+}
 
 // pre-fetch to optimize page rendering
 store.dispatch(getRaces((new Date()).getFullYear()))

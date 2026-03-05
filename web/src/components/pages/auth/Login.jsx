@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Page } from 'components/common/Page';
-import { Grid } from '@material-ui/core';
+import { Grid, Typography, Button } from '@material-ui/core';
 import {
   Authenticator,
   ThemeProvider,
@@ -10,14 +10,26 @@ import {
 import '@aws-amplify/ui-react/styles.css';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router';
+import config from 'config';
 
 export default function Login() {
-  const { route } = useAuthenticator((context) => [context.route]);
   const location = useLocation();
   const navigate = useNavigate();
   let from = (location.state?.from?.pathname || "/") + location.state?.from?.search;
+  
+  // In demo mode, automatically redirect to the destination
   useEffect(() => {
-    if (route === "authenticated") {
+    if (config.isDemoMode) {
+      console.log("Demo mode: auto-authenticating and navigating to ", from);
+      navigate(from, { replace: true });
+    }
+  }, [config.isDemoMode, navigate, from]);
+  
+  // Only use real authenticator in non-demo mode
+  const { route } = config.isDemoMode ? { route: 'authenticated' } : useAuthenticator((context) => [context.route]);
+  
+  useEffect(() => {
+    if (route === "authenticated" && !config.isDemoMode) {
       // navigate(-1);
       console.log("navigating back to ", from);
       navigate(from, { replace: true });

@@ -20,12 +20,12 @@ import { Loadable } from "components/common/Loadable";
 import { getRaces } from "store/actions/racesActions";
 import { useMatch, useResolvedPath } from "react-router-dom";
 import { getLeagueInviteLink } from "utils/resources";
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import { Map } from 'immutable';
+import { useAuth } from "hooks/useAuth";
 
 export default function League(props) {
   const dispatch = useDispatch();
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const match = useMatch("/leagues/:id");
   const leagueId = match.params.id;
 

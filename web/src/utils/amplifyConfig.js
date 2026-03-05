@@ -1,4 +1,4 @@
-import awsconfig from '../aws-exports';
+import config from '../config';
 
 const isLocalhost = Boolean(
   window.location.hostname === 'localhost' ||
@@ -10,22 +10,26 @@ const isLocalhost = Boolean(
   )
 );
 
-const [
-  localRedirectSignIn,
-  productionRedirectSignIn,
-] = awsconfig.oauth.redirectSignIn.split(',');
+let updatedAwsConfig;
+if (!config.isDemoMode) {
+  const awsconfig = require('../aws-exports');
+  const [
+    localRedirectSignIn,
+    productionRedirectSignIn,
+  ] = awsconfig.oauth.redirectSignIn.split(',');
 
-const [
-  localRedirectSignOut,
-  productionRedirectSignOut,
-] = awsconfig.oauth.redirectSignOut.split(',');
+  const [
+    localRedirectSignOut,
+    productionRedirectSignOut,
+  ] = awsconfig.oauth.redirectSignOut.split(',');
 
-const updatedAwsConfig = {
-  ...awsconfig,
-  oauth: {
-    ...awsconfig.oauth,
-    redirectSignIn: isLocalhost ? localRedirectSignIn : productionRedirectSignIn,
-    redirectSignOut: isLocalhost ? localRedirectSignOut : productionRedirectSignOut,
+  updatedAwsConfig = {
+    ...awsconfig,
+    oauth: {
+      ...awsconfig.oauth,
+      redirectSignIn: isLocalhost ? localRedirectSignIn : productionRedirectSignIn,
+      redirectSignOut: isLocalhost ? localRedirectSignOut : productionRedirectSignOut,
+    }
   }
 }
 

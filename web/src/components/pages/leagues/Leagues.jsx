@@ -17,12 +17,12 @@ import { clearNewLeagueJoined, getLeagues } from "store/actions/leaguesActions";
 import { getLeaguesResource } from "utils/resources";
 import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
-import { useAuthenticator } from "@aws-amplify/ui-react";
 import { useCallback } from "react";
+import { useAuth } from "hooks/useAuth";
 
 export default function Leagues(props) {
   const dispatch = useDispatch();
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const leaguesState = useSelector((state) => state.leagues);
   const { loading, error, leaguesList, joinLeagueError } = leaguesState;
 

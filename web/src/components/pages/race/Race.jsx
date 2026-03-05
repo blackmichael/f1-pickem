@@ -26,7 +26,7 @@ import { Subtitle } from "components/common/Subtitle";
 import { Loadable } from "components/common/Loadable";
 import { Link, useMatch } from "react-router-dom";
 import { getLeaguesResource } from "utils/resources";
-import { useAuthenticator } from "@aws-amplify/ui-react";
+import { useAuth } from "hooks/useAuth";
 
 export default function Race(props) {
   const dispatch = useDispatch();
@@ -34,7 +34,7 @@ export default function Race(props) {
   const leagueId = match.params.leagueId;
   const raceId = match.params.raceId;
 
-  const { user } = useAuthenticator((context) => [context.user]);
+  const { user } = useAuth();
   const userId = user?.username;
 
   const leaguesState = useSelector((state) => state.leagues);
